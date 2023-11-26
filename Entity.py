@@ -14,9 +14,9 @@ class Agent(Entity):
         self.task = None
         self.keys = {}
 
-    def _move(self, hori: int, verti: int) -> None:
-        self.pos[1] += hori
+    def _move(self, verti: int, hori: int) -> None:
         self.pos[0] += verti
+        self.pos[1] += hori
     
     def addTask(self, task: Entity) -> bool:
         if self.task is None:
