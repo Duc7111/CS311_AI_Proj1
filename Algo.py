@@ -1,5 +1,6 @@
 from World import World
 
+
 def bfs(world):
     agent = world.agents[0]
     task = agent.task
@@ -17,6 +18,7 @@ def bfs(world):
             continue
 
         visited.add(pos)
+
 
         for hori, verti in [(0, 1), (0, -1), (1, 0), (-1, 0)]:#Not checking the diagonal movement
             new_pos = [pos[0] + verti, pos[1] + hori]
