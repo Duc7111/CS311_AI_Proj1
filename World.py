@@ -49,8 +49,7 @@ class World:
         #return True if the position is not empty
         return self.floors[entity.pos[0]].base[entity.pos[1]][entity.pos[2]] != bs.EMPTY.value
 
-    def _check(self, n: int, m: int, id: int) -> str:
-        agent = self.agents[id]
+    def _check(self, n: int, m: int, agent: Agent) -> str:
         n += agent.pos[1]
         m += agent.pos[2]
         if n not in range(0, self.n) or m not in range(0, self.m):
@@ -77,13 +76,12 @@ class World:
 
     # movable -> move + return true | else return false
     # n, m: -1, 0, 1
-    def move(self, n: int, m: int, agentID: int = 0) -> bool:
-        agent = self.agents[agentID]
+    def move(self, n: int, m: int, agent: Agent) -> bool:
         base = self.floors[agent.pos[0]].base
         if n != 0 and m != 0: # diagonal moves
-            if self._check(0, m, agentID) == msg.BLOCKED.value or self._check(n, 0, agentID) == msg.BLOCKED.value:
+            if self._check(0, m, agent) == msg.BLOCKED.value or self._check(n, 0, agent) == msg.BLOCKED.value:
                 return False
-        match self._check(n, m, agentID):
+        match self._check(n, m, agent):
             case msg.BLOCKED.value:
                 return False
             case msg.MOVEABLE.value:
