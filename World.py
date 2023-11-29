@@ -31,9 +31,9 @@ class World:
             line = file.readline() # read the next line indicate next floor name
         pass
 
-    def __notEmpty(self, entity: Entity):
-        
-        pass
+    def __notEmpty(self, entity: Entity) -> bool:
+        #return True if the position is not empty
+        return self.floors[entity.pos[0]].base[entity.pos[1]][entity.pos[2]] != bs.EMPTY.value
 
     def _check(self, n: int, m: int, id: int) -> str:
         agent = self.agents[id]
