@@ -17,12 +17,16 @@ class World:
         sizes[1] = int(sizes[1])
         line = file.readline() # read floor name. kinda skip it
         while line != '':
+            if line == '\n':
+                line = file.readline()
+                continue
             map = Map(sizes[0], sizes[1])
             for i in range (0, sizes[0]):
                 line = file.readline()
+                line.replace('\n', '')
                 cells = line.split(',')
                 for j in range(0, sizes[1]):
-                    map.base[i][j] = cells[j] if cells[j][0] != bs.AGENT.value else 0 # storing Agents seperately
+                    map.base[i][j] = cells[j] if cells[j][0] != bs.AGENT.value else 0 # storing Agents seperately            
             self.floors.append(map)
             line = file.readline() # read the next line indicate next floor name
         pass
