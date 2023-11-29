@@ -33,8 +33,7 @@ class World:
                     # storing Agents seperately
                     if cells[j][0] == bs.AGENT.value:
                         if cells[j] not in self.agents:
-                            agent = Agent(f, i, j)
-                            self.agents[cells[j]] = agent
+                            self.agents[cells[j]] = Agent(f, i, j)
                         else:
                             self.agents[cells[j]].pos = [f, i, j]
                     # store task in agent

@@ -3,9 +3,7 @@ class Entity():
     pos = [0, 0, 0]
 
     def __init__(self, f: int, n: int, m: int) -> None:
-        self.pos[0] = f
-        self.pos[1] = n
-        self.pos[2] = m
+        self.pos = [f, n, m]
 
 
 class Agent(Entity):
