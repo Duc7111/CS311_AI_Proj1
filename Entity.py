@@ -39,5 +39,5 @@ class Agent(Entity):
 class Key(Entity):
     def __init__(self, f: int, n: int, m: int) -> None:
         super().__init__(f, n, m)
-        self.doors = {}
+        self.doors = []
 
