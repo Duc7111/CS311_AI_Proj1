@@ -16,6 +16,7 @@ class World:
         sizes[0] = int(sizes[0])
         sizes[1] = int(sizes[1])
         line = file.readline() # read floor name. kinda skip it
+        f = 0
         while line != '':
             if line == '\n':
                 line = file.readline()
@@ -26,8 +27,21 @@ class World:
                 line.replace('\n', '')
                 cells = line.split(',')
                 for j in range(0, sizes[1]):
-                    map.base[i][j] = cells[j] if cells[j][0] != bs.AGENT.value else 0 # storing Agents seperately            
+                    map.base[i][j] = cells[j] if cells[j][0] != bs.AGENT.value else 0 
+                    # storing Agents seperately
+                    if cells[j][0] == bs.AGENT.value:
+                        agent = Agent(f, i, j)
+                        self.agents[cells[j]] = agent
+                    # store random access key
+                    elif cells[j][0] == bs.KEY.value:
+                        key = Key(f, i, j)
+                        self.keys[cells[j]] = key
+                    # store doors in key
+                    elif cells[j][0] == bs.DOOR.value:
+                        door = Entity(f, i, j)
+                        self.keys[cells[j].replace('D', 'K')].doors = door
             self.floors.append(map)
+            f += 1
             line = file.readline() # read the next line indicate next floor name
         pass
 
@@ -84,27 +98,3 @@ class World:
                 agent._move(n, m)
                 agent.keys[base[agent.pos[1]][agent.pos[2]]] = 1 # add key
         return True
-
-    def addWall(self, entity: Entity) -> bool:
-        if self.__notEmpty(entity):
-            return False
-        base = self.floors[entity.pos[0]]
-        base[entity.pos[1]][entity.pos[2]] = bs.WALL.value
-        return True
-    
-    def addAgent(self, agent: Agent, id: int) -> bool:
-        if id in self.agents or self.__notEmpty(agent) or self.__notEmpty(agent):
-            return False
-        base = self.floors[agent.pos[0]]
-        base[agent.pos[1]][agent.pos[2]] = bs.AGENT.value + str(id)
-        base[agent.task[1]][agent.task[2]] = bs.TASK.value + str(id)
-        return True
-        
-    def addKey(self, key: Key, id: int) -> bool:
-        if id in self.keys or self.__notEmpty(key) or self.__notEmpty(key):
-            return False
-        self.keys[id] = key
-        self.base[key.pos[0]][key.pos[1]] = bs.KEY.value + str(id) 
-        self.base[key.door[0]][key.door[1]] = bs.DOOR.value + str(id) # Setup doors
-        
-

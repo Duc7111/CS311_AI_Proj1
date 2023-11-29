@@ -37,7 +37,7 @@ class Agent(Entity):
         return max(abs(self.pos[0] - self.task[0]), abs(abs(self.pos[1] - self.task[1])))
 
 class Key(Entity):
-    def __init__(self, f: int, n: int, m: int, door: Entity) -> None:
+    def __init__(self, f: int, n: int, m: int) -> None:
         super().__init__(f, n, m)
-        self.door = door
+        self.doors = {}
 
