@@ -11,13 +11,12 @@ class Node:
         print(self.pos, " ", self.g + self.h)
 
     def isGoal(self) -> bool:
-        for a in agents:
-            if a.pos != a.task.pos:
-                return False
+        if self.agents.pos != self.agents.task.pos:
+            return False
         return True
 
     def __eq__(self, other):
-        return self.pos == other.pos
+        return self.agents.pos == other.agents.pos
 
     def __lt__(self, other):
         return (self.g + self.h) < (other.g + other.h)

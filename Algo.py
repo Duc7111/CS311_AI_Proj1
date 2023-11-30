@@ -10,28 +10,25 @@ def bfs(world):
 
     queue = [Node(agents = agent)]
     visited = set()
+    visited.add(tuple(agent.pos))
 
     while queue:
-        current = queue.pop()
+        current = queue.pop(0)
         agentCurrent = current.agents
-        print(agentCurrent.pos)
-        print(agentCurrent.task.pos)
-        if current.isGoal == True:
+        if current.isGoal() == True:
             return current
-        
-        visited.add(tuple(agentCurrent.pos))
-        print(agentCurrent.pos)
 
         for hori, verti in directions:
-            new_pos = [agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
+            new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
             if tuple(new_pos) in visited:
                 continue
-            agentNext = copy.copy(agentCurrent)
+            agentNext = copy.deepcopy(agentCurrent)
             # Check if the move is valid using the move function
             if world.move(hori, verti, agentNext):
-                queue.append(Node(parent = agentCurrent, agents = agentNext))
+                queue.append(Node(parent = current, agents = agentNext))
+                visited.add(tuple(agentNext.pos))
 
-    return False
+    return None
 
 
 def UCS(world):
