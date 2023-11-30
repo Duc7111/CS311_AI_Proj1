@@ -51,3 +51,24 @@ class Map:
                 temp.pos[1] -= move[0]
                 temp.pos[2] -= move[1]
         return [doors, spaned]
+    
+    # continue scaning from the last scaned cell
+    def reScan(self, spaned, doors, keys):
+        moves = ((1, 0), (-1, 0), (0, 1), (0, -1)) # down, up, right, left, skip diagnal moves
+        frontier = [door for door in doors]
+        while len(frontier) != 0:
+            span = frontier.pop(0)
+            for move in moves:
+                next = deepcopy(span)
+                next.pos[1] += move[0]
+                next.pos[2] += move[1]
+                if next.pos[1] < 0 or next.pos[1] >= self.n or next.pos[2] < 0 or next.pos[2] >= self.m: 
+                    continue
+                if next.pos in spaned or self.base[next.pos[1]][next.pos[2]] in (bs.WALL.value, bs.UP.value, bs.DOWN.value):
+                    continue
+                if self.base[next.pos[1]][next.pos[2]][0] == bs.DOOR.value:
+                    if self.base[next.pos[1]][next.pos[2]].replace(bs.DOOR.value, bs.KEY.value) not in keys:
+                        doors.append((next, self.base[next.pos[1]][next.pos[2]], spaned[span.pos] + 1))
+                        continue
+                frontier.append(next)
+                spaned[next.pos] = spaned[span.pos] + 1
