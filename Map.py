@@ -2,11 +2,10 @@
 from io import TextIOWrapper
 
 from Enum import BlockState as bs
+from Entity import Entity
 
 
 class Map:
-    n = 0
-    m = 0
     base = []
 
     def __init__(self, n: int, m: int) -> None:
@@ -14,5 +13,5 @@ class Map:
         self.n = n
         self.m = m
 
-    
-    
+    def scan(self, keys: [], task: Entity) -> []:
+        pass
