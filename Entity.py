@@ -18,15 +18,15 @@ class Agent(Entity):
 
     # Mahadtan distance, overestimate the true cost since diagnal move count 1
     def MD(self) -> int: 
-        return abs(self.pos[0] - self.task[0]) + abs(abs(self.pos[1] - self.task[1]))
+        return abs(self.pos[1] - self.task[1]) + abs(abs(self.pos[2] - self.task[2]))
     
     # Euclidean distance, still overestimate the true cost
     def ED(self) -> int:
-        return int((abs(self.pos[0] - self.task[0])**2 + abs(abs(self.pos[1] - self.task[1]))**2)**0.5)
+        return int((abs(self.pos[1] - self.task[1])**2 + abs(abs(self.pos[2] - self.task[2]))**2)**0.5)
 
     # Combine two types, admissible
     def MED(self) -> int:
-        return max(abs(self.pos[0] - self.task[0]), abs(abs(self.pos[1] - self.task[1])))
+        return abs(self.pos[0] - self.task.pos[0]) + max(abs(self.pos[1] - self.task.pos[1]), abs(abs(self.pos[2] - self.task.pos[2])))
 
 class Key(Entity):
     def __init__(self, f: int, n: int, m: int) -> None:
