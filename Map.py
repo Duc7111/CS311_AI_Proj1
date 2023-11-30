@@ -1,5 +1,4 @@
 
-from io import TextIOWrapper
 from copy import deepcopy
 
 from Enum import BlockState as bs
@@ -49,4 +48,6 @@ class Map:
                 if temp.pos in spaned:
                     doors.remove(door)
                     break
+                temp.pos[1] -= move[0]
+                temp.pos[2] -= move[1]
         return [doors, spaned]
