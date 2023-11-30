@@ -15,12 +15,6 @@ class Agent(Entity):
     def _move(self, verti: int, hori: int) -> None:
         self.pos[1] += verti
         self.pos[2] += hori
-    
-    def addTask(self, task: Entity) -> bool:
-        if self.task is None:
-            self.task = task
-            return True
-        return False
 
     # Mahadtan distance, overestimate the true cost since diagnal move count 1
     def MD(self) -> int: 

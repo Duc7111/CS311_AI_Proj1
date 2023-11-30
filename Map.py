@@ -14,13 +14,5 @@ class Map:
         self.n = n
         self.m = m
 
-    def _notEmpty(self, pos: list):
-        return self.base[pos[0]][pos[1]] != bs.EMPTY.value
     
-    def _read(fin: TextIOWrapper) -> None:
-        pass
-
-    def _write(fout: TextIOWrapper) -> None:
-        pass
-
     
