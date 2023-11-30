@@ -67,8 +67,8 @@ class World:
         if n not in range(0, self.n) or m not in range(0, self.m):
             return msg.BLOCKED.value
         base = self.floors[agent.pos[0]].base
-        for a in self.agents:
-            if self.agents[a].pos == [agent.pos[0], n, m]:
+        for a in self.agents.values():
+            if a.pos == [agent.pos[0], n, m]:
                 return msg.BLOCKED.value
         if base[n][m] == bs.WALL.value:
             return msg.BLOCKED.value
