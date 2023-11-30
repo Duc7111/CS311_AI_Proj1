@@ -72,10 +72,6 @@ class World:
                 return msg.BLOCKED.value
         if base[n][m] == bs.WALL.value:
             return msg.BLOCKED.value
-        elif base[n][m] == bs.UP.value:
-            return msg.UP.value
-        elif base[n][m] == bs.DOWN.value:
-            return msg.DOWN.value
         elif base[n][m][0] == bs.KEY.value: # First char
             return msg.KEY.value
         elif base[n][m][0] == bs.DOOR.value:
@@ -97,14 +93,13 @@ class World:
             case msg.BLOCKED.value:
                 return False
             case msg.MOVEABLE.value:
-                agent._move(n, m)
-            case msg.UP.value:
-                agent.pos[0] += 1
-                agent._move(n, m)
-            case msg.DOWN.value:
-                agent.pos[0] += -1
+                if base[agent.pos[1]][agent.pos[2]] == bs.UP.value:
+                    agent.pos[0] += 1
+                elif base[agent.pos[1]][agent.pos[2]] == bs.DOWN.value:
+                    agent.pos[0] -= 1
                 agent._move(n, m)
             case msg.KEY.value:
                 agent._move(n, m)
                 agent.keys[base[agent.pos[1]][agent.pos[2]]] = 1 # add key
         return True
+
