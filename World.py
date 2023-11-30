@@ -25,11 +25,10 @@ class World:
                 continue
             map = Map(self.n, self.m)
             for i in range (0, self.n):
-                line = file.readline()
-                line.replace('\n', '')
+                line = file.readline().replace('\n', '')
                 cells = line.split(',')
                 for j in range(0, self.m):
-                    map.base[i][j] = cells[j] if cells[j][0] != bs.AGENT.value else 0 
+                    map.base[i][j] = cells[j] if cells[j][0] != bs.AGENT.value else '0' 
                     # storing Agents seperately
                     if cells[j][0] == bs.AGENT.value:
                         if cells[j] not in self.agents:
@@ -68,11 +67,9 @@ class World:
         if n not in range(0, self.n) or m not in range(0, self.m):
             return msg.BLOCKED.value
         base = self.floors[agent.pos[0]].base
-        for i in base:
-            print(i)
-        # for a in self.agents:
-        #     if a.pos == [agent.pos[0], n, m]:
-        #         return msg.BLOCKED.value
+        for a in self.agents:
+            if self.agents[a].pos == [agent.pos[0], n, m]:
+                return msg.BLOCKED.value
         if base[n][m] == bs.WALL.value:
             return msg.BLOCKED.value
         elif base[n][m] == bs.UP.value:
