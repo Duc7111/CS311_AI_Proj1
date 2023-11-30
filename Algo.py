@@ -56,3 +56,29 @@ def UCS(world):
                 queue.put(Node(parent = current, agents = agentNext, g = current.g + 1))
 
     return None
+
+def Astar(world):
+    agent = world.agents["A1"]
+
+    queue = PriorityQueue()
+    queue.put(Node(agents = agent))
+    visited = set()
+
+    while queue:
+        current = queue.get()
+        agentCurrent = current.agents
+        visited.add(tuple(agentCurrent.pos))
+
+        if current.isGoal() == True:
+            return current
+
+        for hori, verti in directions:
+            new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
+            if tuple(new_pos) in visited:
+                continue
+            agentNext = copy.deepcopy(agentCurrent)
+            # Check if the move is valid using the move function
+            if world.move(hori, verti, agentNext):
+                queue.put(Node(parent = current, agents = agentNext, g = current.g + 1, h = agentNext.MED()))
+
+    return None
