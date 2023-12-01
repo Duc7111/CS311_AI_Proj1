@@ -3,6 +3,7 @@ from Enum import BlockState as bs, MSG as msg
 
 from Entity import Entity, Agent, Key
 from Map import Map
+from copy import deepcopy
 
 class World:
     floors = [] # maps
@@ -104,12 +105,14 @@ class World:
         return True
 
     def getToDoList(self, agent: Agent) -> []:
-        keys = [key for key in agent.keys]
-        moves = ((1, 0), (-1, 0), (0, 1), (0, -1)) # down, up, right, left, skip diagnal moves
+        keys = [key for key in agent.keys] 
         main = self.floors[agent.task.pos[0]].scan(keys, agent.task)
         spanKeys = {}
         for door in main[0]:
             keyID = door[1].replace(bs.DOOR.value, bs.KEY.value)
             if keyID not in spanKeys:
-                spanKeys[keyID] = self.floors[self.keys[keyID].pos[0]].scan([], self.keys[keyID])
+                tempAgent = Agent(agent.pos[0], agent.pos[1], agent.pos[2])
+                tempAgent.keys = keys
+                tempAgent.task = self.keys[keyID]               
+                spanKeys[keyID] = self.getToDoList(tempAgent)
                 

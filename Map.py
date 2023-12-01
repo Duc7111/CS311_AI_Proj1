@@ -54,7 +54,7 @@ class Map:
     
     # continue scaning from the last scaned cell
     def reScan(self, spaned, doors, keys):
-        moves = ((1, 0), (-1, 0), (0, 1), (0, -1)) # down, up, right, left, skip diagnal moves
+        moves = ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1))
         frontier = [door for door in doors]
         while len(frontier) != 0:
             span = frontier.pop(0)
@@ -62,10 +62,25 @@ class Map:
                 next = deepcopy(span)
                 next.pos[1] += move[0]
                 next.pos[2] += move[1]
+                # check next in base
                 if next.pos[1] < 0 or next.pos[1] >= self.n or next.pos[2] < 0 or next.pos[2] >= self.m: 
                     continue
+                # check diagonal moves
+                if move[0] != 0 and move[1] != 0:
+                    # check obstacles
+                    if self.base[span.pos[1]][next.pos[2]] in (bs.WALL.value, bs.UP.value, bs.DOWN.value) or self.base[next.pos[1]][span.pos[2]] in (bs.WALL.value, bs.UP.value, bs.DOWN.value):
+                        continue
+                    # check doors
+                    if self.base[span.pos[1]][next.pos[2]][0] == bs.DOOR.value:
+                        if self.base[span.pos[1]][next.pos[2]].replace(bs.DOOR.value, bs.KEY.value) not in keys:
+                            continue
+                    if self.base[next.pos[1]][span.pos[2]][0] == bs.DOOR.value:
+                        if self.base[span.pos[1]][next.pos[2]].replace(bs.DOOR.value, bs.KEY.value) not in keys:
+                            continue
+                # check obstacles
                 if next.pos in spaned or self.base[next.pos[1]][next.pos[2]] in (bs.WALL.value, bs.UP.value, bs.DOWN.value):
                     continue
+                # check doors
                 if self.base[next.pos[1]][next.pos[2]][0] == bs.DOOR.value:
                     if self.base[next.pos[1]][next.pos[2]].replace(bs.DOOR.value, bs.KEY.value) not in keys:
                         doors.append((next, self.base[next.pos[1]][next.pos[2]], spaned[span.pos] + 1))
