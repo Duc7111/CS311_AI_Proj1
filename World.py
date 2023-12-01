@@ -7,7 +7,7 @@ from Map import Map
 class World:
     floors = [] # maps
     agents = {} # agentID, agent
-    keys = {}
+    keys = {} # keyID, key
     n = 0 # row
     m = 0 # col
 
@@ -103,3 +103,13 @@ class World:
                 agent.keys[base[agent.pos[1]][agent.pos[2]]] = 1 # add key
         return True
 
+    def getToDoList(self, agent: Agent) -> []:
+        keys = [key for key in agent.keys]
+        moves = ((1, 0), (-1, 0), (0, 1), (0, -1)) # down, up, right, left, skip diagnal moves
+        main = self.floors[agent.task.pos[0]].scan(keys, agent.task)
+        spanKeys = {}
+        for door in main[0]:
+            keyID = door[1].replace(bs.DOOR.value, bs.KEY.value)
+            if keyID not in spanKeys:
+                spanKeys[keyID] = self.floors[self.keys[keyID].pos[0]].scan([], self.keys[keyID])
+                
