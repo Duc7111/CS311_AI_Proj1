@@ -38,7 +38,7 @@ def UCS(world):
     queue.put(Node(agents = agent))
     visited = set()
 
-    while queue:
+    while queue.empty() != True:
         current = queue.get()
         agentCurrent = current.agents
 
@@ -68,7 +68,7 @@ def Astar(world):
     queue.put(Node(agents = agent))
     visited = set()
 
-    while queue:
+    while queue.empty() != True:
         current = queue.get()
         agentCurrent = current.agents
 
