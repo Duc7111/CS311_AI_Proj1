@@ -1,3 +1,4 @@
+from typing import List
 
 from Enum import BlockState as bs, MSG as msg
 
@@ -123,4 +124,11 @@ class World:
                 tempAgent.keys = keys
                 tempAgent.task = self.keys[keyID]               
                 spanKeys[keyID] = self.getToDoList(tempAgent)
-                
+
+    def get_floor_array(self, floor_index: int) -> List[List[str]]:
+
+        if 0 <= floor_index < len(self.floors):
+            return self.floors[floor_index].base
+        else:
+            # Handle invalid floor index (you can raise an exception or return a default value)
+            return []

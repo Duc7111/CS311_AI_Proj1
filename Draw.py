@@ -95,3 +95,26 @@ class MoveYourStepProjectApp:
             widget.destroy()
 
 
+class Board(tk.Canvas):
+    def __init__(self, master, board_data, cell_size):
+        rows = len(board_data)
+        cols = len(board_data[0])
+        super().__init__(master, width=cols * cell_size, height=rows * cell_size)
+        self.rows = rows
+        self.cols = cols
+        self.cell_size = cell_size
+        self.board_data = board_data
+        self.draw_board()
+
+    def draw_board(self):
+        color_mapping = {'0': "white", '-1': "gray", "T1": "yellow"}
+
+        for row in range(self.rows):
+            for col in range(self.cols):
+                cell_value = self.board_data[row][col]
+                color = color_mapping.get(cell_value, "white")  # Default to white if not in mapping
+                x1 = col * self.cell_size
+                y1 = row * self.cell_size
+                x2 = x1 + self.cell_size
+                y2 = y1 + self.cell_size
+                self.create_rectangle(x1, y1, x2, y2, outline="black", fill=color)
