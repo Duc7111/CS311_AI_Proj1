@@ -94,15 +94,23 @@ class World:
             case msg.BLOCKED.value:
                 return False
             case msg.MOVEABLE.value:
-                if base[agent.pos[1]][agent.pos[2]] == bs.UP.value:
-                    agent.pos[0] += 1
-                elif base[agent.pos[1]][agent.pos[2]] == bs.DOWN.value:
-                    agent.pos[0] -= 1
                 agent._move(n, m)
             case msg.KEY.value:
                 agent._move(n, m)
                 agent.keys[base[agent.pos[1]][agent.pos[2]]] = 1 # add key
         return True
+
+    def moveUpDown(self, f: int, agent: Agent) -> bool:
+        base = self.floors[agent.pos[0]].base
+        if f == 1:
+            if base[agent.pos[1]][agent.pos[2]] == bs.UP.value:
+                agent.pos[0] += 1
+                return True
+        elif f == -1:
+            if base[agent.pos[1]][agent.pos[2]] == bs.DOWN.value:
+                agent.pos[0] -= 1
+                return True
+        return False
 
     def getToDoList(self, agent: Agent) -> []:
         keys = [key for key in agent.keys] 
