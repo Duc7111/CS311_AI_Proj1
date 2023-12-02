@@ -41,6 +41,10 @@ def UCS(world):
     while queue:
         current = queue.get()
         agentCurrent = current.agents
+
+        if tuple(agentCurrent.pos) in visited:
+            continue
+
         visited.add(tuple(agentCurrent.pos))
 
         if current.isGoal() == True:
@@ -67,6 +71,10 @@ def Astar(world):
     while queue:
         current = queue.get()
         agentCurrent = current.agents
+
+        if tuple(agentCurrent.pos) in visited:
+            continue
+
         visited.add(tuple(agentCurrent.pos))
 
         if current.isGoal() == True:
