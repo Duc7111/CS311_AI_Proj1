@@ -43,7 +43,7 @@ if __name__ == "__main__":
         floor_array = world.get_floor_array(floor_index_to_access)
         value = convert(floor_array)
         print(value)
-        cell_size = 30
+        cell_size = (200-len(floor_array)-len(floor_array[0]))/6
         board = Board(root, value, cell_size)
 
         move = []
@@ -62,7 +62,10 @@ if __name__ == "__main__":
             if value[item[1]][item[2]] != 'T1':
                 value[item[1]][item[2]] = int(value[item[1]][item[2]]) + 1
             print(item)
-        print(board)
+        app.clearscreen()
+        board = Board(root, value, cell_size)
+        board.pack()
+
     root = tk.Tk()
     app = MoveYourStepProjectApp(root, handle_level_selection)
     root.mainloop()

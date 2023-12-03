@@ -107,14 +107,33 @@ class Board(tk.Canvas):
         self.draw_board()
 
     def draw_board(self):
-        color_mapping = {0: "white", '-1': "gray", "T1": "yellow"}
+        # Color mapping for specific values
+        special_color_mapping = {0: "white", '-1': "gray", "T1": "yellow"}
+
+        # Define a range of red tones for positive values
+        min_value = 1  # Minimum positive value
+        max_value = 10  # Maximum positive value
+        red_tones = ['#ff9999', '#ff8888', '#ff7777', '#ff6666', '#ff5555', '#ff4444', '#ff3333', '#ff2222', '#ff1111']
 
         for row in range(self.rows):
             for col in range(self.cols):
                 cell_value = self.board_data[row][col]
-                color = color_mapping.get(cell_value, "white")  # Default to white if not in mapping
+                value_text = str(cell_value)
+
+                # Check for special values
+                if cell_value in special_color_mapping:
+                    color = special_color_mapping[cell_value]
+                elif cell_value > 0:
+                    # Map positive values to red tones
+                    index = min(cell_value - min_value, len(red_tones) - 1)
+                    color = red_tones[index]
+                else:
+                    # Default to white if not in mapping
+                    color = "white"
+
                 x1 = col * self.cell_size
-                y1 = row * self.cell_size
+                y1 = row * 0.75 * self.cell_size
                 x2 = x1 + self.cell_size
-                y2 = y1 + self.cell_size
+                y2 = y1 + 0.75 * self.cell_size
+
                 self.create_rectangle(x1, y1, x2, y2, outline="black", fill=color)
