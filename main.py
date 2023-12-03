@@ -3,10 +3,13 @@ from Draw import MoveYourStepProjectApp, SecondScreen, AlgorithmScreen, Board
 import tkinter as tk
 from tkinter import messagebox
 from Algo import bfs, UCS, Astar
-
 import pygame
 import sys
 from drawpygame import create_buttons, Button, BUTTON_WIDTH, BUTTON_HEIGHT
+
+def convert(board):
+    converted_board = [[0 if cell == '0' else cell for cell in row] for row in board]
+    return converted_board
 
 if __name__ == "__main__":
 
@@ -38,8 +41,12 @@ if __name__ == "__main__":
         world = World(inp)
         floor_index_to_access = 0  # Replace this with the desired floor index
         floor_array = world.get_floor_array(floor_index_to_access)
-        cell_size=30
-        board = Board(root, floor_array, cell_size)
+        value = convert(floor_array)
+        print(value)
+        cell_size = 30
+        board = Board(root, value, cell_size)
+
+        move = []
         board.pack()
         if algorithm == "BFS":
             final = bfs(world)
@@ -49,8 +56,13 @@ if __name__ == "__main__":
             final = Astar(world)
         while final is not None:
             print(final.agents.pos)
+            move.append(final.agents.pos)
             final = final.parent
-
+        for item in reversed(move):
+            if value[item[1]][item[2]] != 'T1':
+                value[item[1]][item[2]] = int(value[item[1]][item[2]]) + 1
+            print(item)
+        print(board)
     root = tk.Tk()
     app = MoveYourStepProjectApp(root, handle_level_selection)
     root.mainloop()

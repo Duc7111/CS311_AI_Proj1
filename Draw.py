@@ -107,7 +107,7 @@ class Board(tk.Canvas):
         self.draw_board()
 
     def draw_board(self):
-        color_mapping = {'0': "white", '-1': "gray", "T1": "yellow"}
+        color_mapping = {0: "white", '-1': "gray", "T1": "yellow"}
 
         for row in range(self.rows):
             for col in range(self.cols):
