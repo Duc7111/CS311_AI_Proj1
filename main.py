@@ -1,5 +1,7 @@
+import time
+
 from World import World
-from Draw import MoveYourStepProjectApp, SecondScreen, AlgorithmScreen, Board
+from Draw import MoveYourStepProjectApp, SecondScreen, AlgorithmScreen, Board, convert
 import tkinter as tk
 from tkinter import messagebox
 from Algo import bfs, UCS, Astar
@@ -7,9 +9,7 @@ import pygame
 import sys
 from drawpygame import create_buttons, Button, BUTTON_WIDTH, BUTTON_HEIGHT
 
-def convert(board):
-    converted_board = [[0 if cell == '0' else cell for cell in row] for row in board]
-    return converted_board
+
 
 if __name__ == "__main__":
 
@@ -49,13 +49,18 @@ if __name__ == "__main__":
         move = []
         board.pack()
         if algorithm == "BFS":
-            final = bfs(world)
+            algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
+            final, steps = bfs(world, update_screen_callback=algorithm_screen.update_board)
+            if final is not None:
+                for pos in steps:
+                    algorithm_screen.update_board(world, pos)
+                    app.master.update()  # Force an update of the GUI
+                    app.master.after(1)
         elif algorithm == "UCS":
             final = UCS(world)
         else:
             final = Astar(world)
         while final is not None:
-            print(final.agents.pos)
             move.append(final.agents.pos)
             final = final.parent
         for item in reversed(move):

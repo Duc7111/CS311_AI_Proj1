@@ -3,6 +3,9 @@ from tkinter import messagebox
 
 from _cffi_backend import callback
 
+def convert(board):
+    converted_board = [[0 if cell == '0' else cell for cell in row] for row in board]
+    return converted_board
 
 class AlgorithmScreen:
     def __init__(self, master, level, input_file, callback):
@@ -30,7 +33,20 @@ class AlgorithmScreen:
         messagebox.showinfo("Algorithm Selected", f"You selected {algorithm} for Level {self.level} - Input {self.input_file}.")
         self.callback(self.level, self.input_file, algorithm)
 
-
+    def update_board(self, world, current_pos):
+        self.clearscreen()
+        floor_index_to_access = 0
+        floor_array = world.get_floor_array(floor_index_to_access)
+        value = convert(floor_array)
+        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
+        if value[current_pos[1]][current_pos[2]] != 'T1':
+            value[current_pos[1]][current_pos[2]] += 2
+        board = Board(self.master, value, cell_size)  # Pass self.master instead of root
+        board.pack()
+    def clearscreen(self):
+        # Destroy all widgets in the first screen
+        for widget in self.master.winfo_children():
+            widget.destroy()
 class SecondScreen:
     def __init__(self, master, level, callback):
         self.master = master

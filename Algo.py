@@ -8,19 +8,23 @@ import copy
 directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (-1, 1), (1, -1)]
 
 # Level 1 algorithms
-def bfs(world):
+def bfs(world,update_screen_callback=None):
     agent = world.agents["A1"]
 
     queue = [Node(agents = agent)]
     visited = set()
     visited.add(tuple(agent.pos))
+    steps = []  # Store the visited positions
 
     while queue:
         current = queue.pop(0)
         agentCurrent = current.agents
-        if current.isGoal() == True:
-            return current
+        steps.append(agentCurrent.pos)
 
+        if current.isGoal() == True:
+            return current, steps
+        if update_screen_callback:
+            update_screen_callback(world, agentCurrent.pos)
         for hori, verti in directions:
             new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
             if tuple(new_pos) in visited:
@@ -31,7 +35,7 @@ def bfs(world):
                 queue.append(Node(parent = current, agents = agentNext))
                 visited.add(tuple(agentNext.pos))
 
-    return None
+    return None,steps
 
 
 def UCS(world):
