@@ -8,7 +8,7 @@ class Node:
         self.h = h
 
     def printState(self):
-        print(self.pos, " ", self.g + self.h)
+        print(self.agents.pos, " ", self.g)
 
     def isGoal(self) -> bool:
         if self.agents.pos != self.agents.task.pos:
