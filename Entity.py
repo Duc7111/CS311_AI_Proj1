@@ -9,7 +9,7 @@ class Entity():
 class Agent(Entity):
     def __init__(self, f: int, n: int, m: int) -> None:
         super().__init__(f, n, m)
-        self.task = None
+        self.task = None # Entity
         self.keys = {}
 
     def _move(self, verti: int, hori: int) -> None:
