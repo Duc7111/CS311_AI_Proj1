@@ -128,8 +128,8 @@ def searchKey(currentState: Node, world: World):
 
     return checkpointQueue
 
-def decisionSearch(world):
-    agent = world.agents["A1"]
+def decisionSearch(world, agent = "A1"):
+    agent = world.agents[agent]
     queue = PriorityQueue()
     queue.put(Node(agents = agent))
     while queue.empty() != True:
@@ -146,3 +146,11 @@ def decisionSearch(world):
             queue.put(nodeNext)
 
     return None
+
+# Path reader
+def pathReader(final) -> list:
+    path = []
+    while final is not None:
+        path.insert(0, final.agents.pos)
+        final = final.parent
+    return path
