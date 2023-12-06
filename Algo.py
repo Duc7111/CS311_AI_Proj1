@@ -23,8 +23,8 @@ def bfs(world,update_screen_callback=None):
 
         if current.isGoal() == True:
             return current, steps
-        if update_screen_callback:
-            update_screen_callback(world, agentCurrent.pos)
+        #if update_screen_callback:
+         #   update_screen_callback(world, agentCurrent.pos)
         for hori, verti in directions:
             new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
             if tuple(new_pos) in visited:

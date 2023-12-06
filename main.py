@@ -7,9 +7,6 @@ from tkinter import messagebox
 from Algo import bfs, UCS, Astar
 import pygame
 import sys
-from drawpygame import create_buttons, Button, BUTTON_WIDTH, BUTTON_HEIGHT
-
-
 
 if __name__ == "__main__":
 
@@ -45,7 +42,7 @@ if __name__ == "__main__":
         print(value)
         cell_size = (200-len(floor_array)-len(floor_array[0]))/6
         board = Board(root, value, cell_size)
-
+        value_test=convert(floor_array)
         move = []
         board.pack()
         if algorithm == "BFS":

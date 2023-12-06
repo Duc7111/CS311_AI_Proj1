@@ -12,6 +12,7 @@ class AlgorithmScreen:
         self.master = master
         self.level = level
         self.input_file = input_file
+        self.value = None 
         self.callback = callback  # Callback function to handle algorithm selection
         # Define custom fonts
         self.title_font = ("Arial", 16, "bold")
@@ -36,11 +37,14 @@ class AlgorithmScreen:
         self.clearscreen()
         floor_index_to_access = 0
         floor_array = world.get_floor_array(floor_index_to_access)
-        value = convert(floor_array)
         cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
-        if value[current_pos[1]][current_pos[2]] != 'T1':
-            value[current_pos[1]][current_pos[2]] += 2
-        board = Board(self.master, value, cell_size)  # Pass self.master instead of root
+        if self.value is None:
+            self.value = convert(floor_array)  # Initialize value array if not set
+
+        if self.value[current_pos[1]][current_pos[2]] != 'T1':
+            self.value[current_pos[1]][current_pos[2]] += 1
+        print(self.value)
+        board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
         board.pack()
     def clearscreen(self):
         # Destroy all widgets in the first screen
