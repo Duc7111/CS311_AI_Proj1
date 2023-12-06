@@ -30,7 +30,6 @@ class AlgorithmScreen:
             algorithm_button.pack(pady=5)
 
     def on_algorithm_click(self, algorithm):
-        messagebox.showinfo("Algorithm Selected", f"You selected {algorithm} for Level {self.level} - Input {self.input_file}.")
         self.callback(self.level, self.input_file, algorithm)
 
     def update_board(self, world, current_pos):
@@ -69,7 +68,6 @@ class SecondScreen:
             input_button.pack(pady=5)
 
     def on_input_click(self, input_num):
-        messagebox.showinfo("Input Clicked", f"You clicked on Input {input_num} for Level {self.level}.")
         self.input = input_num
         self.callback(self.level, self.input)
     def clearscreen(self):
@@ -101,7 +99,6 @@ class MoveYourStepProjectApp:
         self.selected_level = None  # Initialize selected_level to None
 
     def on_level_click(self, level):
-        messagebox.showinfo("Level Selected", f"You clicked on Level {level}.")
         self.selected_level = level
         self.callback(self.selected_level)
 

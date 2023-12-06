@@ -55,7 +55,7 @@ if __name__ == "__main__":
                 for pos in steps:
                     algorithm_screen.update_board(world, pos)
                     app.master.update()  # Force an update of the GUI
-                    app.master.after(1)
+                    app.master.after(100)
         elif algorithm == "UCS":
             final = UCS(world)
         else:
