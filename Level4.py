@@ -123,7 +123,11 @@ class Level4:
                                     m = move
                             # move
                             if m is not None:
-                                self.world.move(m[0], m[1], agent)
+                                # add dodge move
+                                path[0].insert(path[1], [agent.pos[0], agent.pos[1] + m[0], agent.pos[2] + m[1]])
+                                # add return move
+                                path[0].insert(path[1] + 1, agent.pos)
+                                self.__move(agentKey, path)
                                 change = True
                             # no possible move: quit
                             else:
