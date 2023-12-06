@@ -5,13 +5,16 @@ from copy import deepcopy
 from Entity import Entity
 from World import World
 from Algo import decisionSearch, pathReader
-from Enum import BlockState as bs
+from Enum import BlockState as bs, MSG as msg
 
 class Level4:
 
     def __init__(self, world: World) -> None:
         self.agents = deepcopy(world.agents) # agentKey: path, next
         self.world = world 
+        self.blockLog = {}
+        for agentKey in self.agents.keys():
+            self.blockLog[agentKey] = []
         self.__precompute()
 
     def __precompute(self) -> None:
@@ -32,12 +35,12 @@ class Level4:
                 path[1] += 1
                 return True
         return False
-
+         
+    # return -1 if agent A1 has reached task, -2 if agent A1 has no possible move, 0 otherwise
     def move(self) -> int:
         change = False
         for agentKey, path in self.agents.items:
             agent = self.world.agents[agentKey]
-            base = self.world.floors[agent.pos[0]].base[agent.pos[1]][agent.pos[2]]
             if path is None:
                 # random a task
                 self.agents[agentKey][0] = None
@@ -57,22 +60,99 @@ class Level4:
             # move in path
             moved = self.__move(agentKey, path)
             change = moved or change
-            if agentKey == 'A1' and not moved:
+            if moved:
+                self.blockLog[agentKey].clear()
+            else:
                 # get blocking agent
                 cur = agent.pos
                 next = path[0][path[1]]
                 if cur[1] == next[1] or cur[2] == cur[2]:
-                    blockingKey = base[next[1]][next[2]]
+                    for tempKey, temp in self.world.agents.items():
+                        if  temp.pos == next:
+                            self.blockLog[agentKey].append(tempKey)
+                            break
                 else:
-                    blockingKeys = []
-                    if base[next[1]][next[2]][0] == bs.AGENT.value:
-                        blockingKeys.append(base[next[1]][next[2]])
-                    if base[next[1]][cur[2]][0] == bs.AGENT.value:
-                        blockingKeys.append(base[next[1]][cur[2]])
-                    if base[cur[1]][next[2]][0] == bs.AGENT.value:
-                        blockingKeys.append(base[cur[1]][next[2]])
+                    for tempKey, temp in self.world.agents.items():
+                        if temp.pos == next or temp.pos == [cur[0], next[1], cur[2]] or temp.pos == [cur[0], cur[1], next[2]]:
+                            self.blockLog[agentKey].append(tempKey)
+                # dodge calculation 
+                if agentKey == 'A1':
+                    # check if agent is in a deadlocked
+                    deadlocked = False
+                    blockTree = {}
+                    frontier = self.blockLog[agentKey]
+                    while len(frontier) > 0:
+                        blockKey = frontier.pop(-1)
+                        for tempKey in self.blockLog[blockKey]:
+                            if tempKey not in blockTree.keys():
+                                frontier.append(tempKey)
+                            elif blockTree[tempKey] == 0:
+                                deadlocked = True
+                                break
+                        blockTree[blockKey] = 0
+
+                    if deadlocked:
+                        # if semi-deadlocked, dodge
+                        if agentKey in blockTree.keys() and blockTree[agentKey] == 0:
+                            # get movable cells
+                            movable = {}
+                            moves = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, -1], [-1, 1], [1, -1]]
+                            for move in moves:
+                                if self.world._check(move[0], move[1], agent) != msg.BLOCKED.value:
+                                    movable[move] = 0
+                            # count number of agents will get blocked by each move
+                            for moves in movable:
+                                pos = [agent.pos[0], agent.pos[1] + moves[0], agent.pos[2] + moves[1]]
+                                for tempKey in self.agents:
+                                    if tempKey == agentKey:
+                                        continue
+                                    tempPath = self.agents[tempKey]
+                                    tempCur = tempPath[0][tempPath[1] - 1]
+                                    tempNext = tempPath[0][tempPath[1]]
+                                    if pos == tempPath[0][tempPath[1]]:
+                                        movable[move] += 1 if tempKey not in blockTree.keys() else 2 # prioritize semi-deadlock agents
+                                    elif tempCur[1] != tempNext[1] and tempCur[2] != tempNext[2]:
+                                        if pos == [tempCur[0], tempNext[1], tempCur[2]] or pos == [tempCur[0], tempCur[1], tempNext[2]]:
+                                            movable[move] += 1 if tempKey not in blockTree.keys() else 2
+                            # choose the move with least number of blocking agents
+                            min = 100
+                            m = None
+                            for move in movable:
+                                if movable[move] < min:
+                                    min = movable[move]
+                                    m = move
+                            # move
+                            if m is not None:
+                                # add dodge move
+                                path[0].insert(path[1], [agent.pos[0], agent.pos[1] + m[0], agent.pos[2] + m[1]])
+                                # add return move
+                                path[0].insert(path[1] + 1, agent.pos)
+                                self.__move(agentKey, path)
+                                change = True
+                            # no possible move: quit
+                            else:
+                                return -2
+                            continue
+
+                        # else, find a new path
+                        world = deepcopy(self.world)
+                        path = decisionSearch(world, agentKey)
+                        if path is not None:
+                            self.agents[agentKey][0] = pathReader(path)
+                            self.agents[agentKey][1] = 1
+                            agent.task = Entity(path[0][1][0], path[0][1][1], path[0][1][2])
+                            # dodge
+                            path = self.agents[agentKey][0]
+                            self.__move(agentKey, path)
+                            change = True
+                        # no path to dodge: quit
+                        else:
+                            return -2
+                    # else, wait
             # check if agent has reached task    
             if agent.pos == agent.task.pos:
                 self.agents[agentKey][0] = None
                 agent.task = None
+                if agentKey == 'A1':
+                    return -1
         return 0 if change else -2        
