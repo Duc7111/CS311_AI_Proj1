@@ -7,11 +7,12 @@ import copy
 # direction to move
 directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (-1, 1), (1, -1)]
 
+
 # Level 1 algorithms
-def bfs(world,update_screen_callback=None):
+def bfs(world):
     agent = world.agents["A1"]
 
-    queue = [Node(agents = agent)]
+    queue = [Node(agents=agent)]
     visited = set()
     visited.add(tuple(agent.pos))
     steps = []  # Store the visited positions
@@ -23,8 +24,7 @@ def bfs(world,update_screen_callback=None):
 
         if current.isGoal() == True:
             return current, steps
-        #if update_screen_callback:
-         #   update_screen_callback(world, agentCurrent.pos)
+
         for hori, verti in directions:
             new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
             if tuple(new_pos) in visited:
@@ -32,30 +32,32 @@ def bfs(world,update_screen_callback=None):
             agentNext = copy.deepcopy(agentCurrent)
             # Check if the move is valid using the move function
             if world.move(hori, verti, agentNext):
-                queue.append(Node(parent = current, agents = agentNext))
+                queue.append(Node(parent=current, agents=agentNext))
                 visited.add(tuple(agentNext.pos))
 
-    return None,steps
+    return None, steps
 
 
 def UCS(world):
     agent = world.agents["A1"]
 
     queue = PriorityQueue()
-    queue.put(Node(agents = agent))
+    queue.put(Node(agents=agent))
     visited = set()
+    steps = []  # Store the visited positions
 
-    while queue.empty() != True:
+    while not queue.empty():
         current = queue.get()
         agentCurrent = current.agents
+        steps.append(agentCurrent.pos)
 
         if tuple(agentCurrent.pos) in visited:
             continue
 
         visited.add(tuple(agentCurrent.pos))
 
-        if current.isGoal() == True:
-            return current
+        if current.isGoal():
+            return current, steps
 
         for hori, verti in directions:
             new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
@@ -64,28 +66,31 @@ def UCS(world):
             agentNext = copy.deepcopy(agentCurrent)
             # Check if the move is valid using the move function
             if world.move(hori, verti, agentNext):
-                queue.put(Node(parent = current, agents = agentNext, g = current.g + 1))
+                queue.put(Node(parent=current, agents=agentNext, g=current.g + 1))
 
-    return None
+    return None, steps
+
 
 def Astar(world):
     agent = world.agents["A1"]
 
     queue = PriorityQueue()
-    queue.put(Node(agents = agent))
+    queue.put(Node(agents=agent))
     visited = set()
+    steps = []  # Store the visited positions
 
-    while queue.empty() != True:
+    while not queue.empty():
         current = queue.get()
         agentCurrent = current.agents
+        steps.append(agentCurrent.pos)
 
         if tuple(agentCurrent.pos) in visited:
             continue
 
         visited.add(tuple(agentCurrent.pos))
 
-        if current.isGoal() == True:
-            return current
+        if current.isGoal():
+            return current, steps
 
         for hori, verti in directions:
             new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
@@ -94,9 +99,9 @@ def Astar(world):
             agentNext = copy.deepcopy(agentCurrent)
             # Check if the move is valid using the move function
             if world.move(hori, verti, agentNext):
-                queue.put(Node(parent = current, agents = agentNext, g = current.g + 1, h = agentNext.MED()))
+                queue.put(Node(parent=current, agents=agentNext, g=current.g + 1, h=agentNext.MED()))
 
-    return None
+    return None, steps
 
 # Level 2 + 3:
 def searchKey(currentState: Node, world: World):
@@ -123,15 +128,16 @@ def searchKey(currentState: Node, world: World):
                 if world.move(hori, verti, agentNext):
                     if tuple(agentNext.pos) in visited:
                         continue
-                    queue.append(Node(parent = current, agents = agentNext, g = current.g + 1, h = agentNext.MED()))
+                    queue.append(Node(parent=current, agents=agentNext, g=current.g + 1, h=agentNext.MED()))
                     visited.add(tuple(agentNext.pos))
 
     return checkpointQueue
 
-def decisionSearch(world, agent = "A1"):
+
+def decisionSearch(world, agent="A1"):
     agent = world.agents[agent]
     queue = PriorityQueue()
-    queue.put(Node(agents = agent))
+    queue.put(Node(agents=agent))
     while queue.empty() != True:
         current = queue.get()
         # agentCurrent = current.agents
@@ -144,8 +150,8 @@ def decisionSearch(world, agent = "A1"):
         while checkpointQueue:
             nodeNext = checkpointQueue.pop(0)
             queue.put(nodeNext)
-
     return None
+
 
 # Path reader
 def pathReader(final) -> list:

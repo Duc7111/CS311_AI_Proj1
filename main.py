@@ -45,28 +45,32 @@ if __name__ == "__main__":
         value_test=convert(floor_array)
         move = []
         board.pack()
-        if algorithm == "BFS":
+        score = 100
+        if level == 1:
             algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
-            final, steps = bfs(world, update_screen_callback=algorithm_screen.update_board)
+            if algorithm == "BFS":
+                final, steps = bfs(world)
+            elif algorithm == "UCS":
+                final, steps = UCS(world)
+            else:
+                final, steps = Astar(world)
             if final is not None:
                 for pos in steps:
                     algorithm_screen.update_board(world, pos)
                     app.master.update()  # Force an update of the GUI
-                    app.master.after(100)
-        elif algorithm == "UCS":
-            final = UCS(world)
-        else:
-            final = Astar(world)
-        while final is not None:
-            move.append(final.agents.pos)
-            final = final.parent
-        for item in reversed(move):
-            if value[item[1]][item[2]] != 'T1':
-                value[item[1]][item[2]] = int(value[item[1]][item[2]]) + 1
-            print(item)
-        app.clearscreen()
-        board = Board(root, value, cell_size)
-        board.pack()
+                    app.master.after(80)
+            while final is not None:
+                move.append(final.agents.pos)
+                final = final.parent
+                score -= 1
+            for item in reversed(move):
+                if value[item[1]][item[2]] != 'T1':
+                    value[item[1]][item[2]] = int(value[item[1]][item[2]]) + 1
+            app.clearscreen()
+            board = Board(root, value, cell_size)
+            board.pack()
+            score_label = tk.Label(root, text=f"Score: {score}", font=("Arial", 12))
+            score_label.pack(pady=10)
 
     root = tk.Tk()
     app = MoveYourStepProjectApp(root, handle_level_selection)

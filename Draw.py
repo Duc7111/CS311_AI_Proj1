@@ -17,6 +17,10 @@ class AlgorithmScreen:
         # Define custom fonts
         self.title_font = ("Arial", 16, "bold")
         self.button_font = ("Arial", 12)
+        self.score = 100  # Add a score attribute
+
+        # Create a label to display the score
+        self.score_label = tk.Label(master, text=f"Score: {self.score}", font=("Arial", 12))
 
         # Create and pack the title label
         self.title_label = tk.Label(master, text=f"Algorithm Selection for Level {level} - Input {input_file}",
@@ -35,7 +39,7 @@ class AlgorithmScreen:
 
     def update_board(self, world, current_pos):
         self.clearscreen()
-        floor_index_to_access = 0
+        floor_index_to_access = current_pos[0]
         floor_array = world.get_floor_array(floor_index_to_access)
         cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
         if self.value is None:
@@ -43,13 +47,16 @@ class AlgorithmScreen:
 
         if self.value[current_pos[1]][current_pos[2]] != 'T1':
             self.value[current_pos[1]][current_pos[2]] += 1
-        print(self.value)
         board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
         board.pack()
     def clearscreen(self):
         # Destroy all widgets in the first screen
         for widget in self.master.winfo_children():
             widget.destroy()
+    def updatescore(self, score):
+        self.score = score
+        self.score_label.config(text=f"Score: {self.score}")
+        self.score_label.pack(pady=10)
 class SecondScreen:
     def __init__(self, master, level, callback):
         self.master = master
@@ -94,6 +101,7 @@ class MoveYourStepProjectApp:
         self.title_label = tk.Label(master, text="MoveYourStepProject", font=self.title_font)
         self.title_label.pack(pady=10)
 
+
         # Create buttons for each level
         for level in range(1, 5):
             button_text = f"{level}. Level {level}"
@@ -129,8 +137,9 @@ class Board(tk.Canvas):
 
         # Define a range of red tones for positive values
         min_value = 1  # Minimum positive value
-        max_value = 10  # Maximum positive value
-        red_tones = ['#ff9999', '#ff8888', '#ff7777', '#ff6666', '#ff5555', '#ff4444', '#ff3333', '#ff2222', '#ff1111']
+        max_value = 20  # Maximum positive value
+        red_tones = ['#ff9999', '#ff8888', '#ff7777', '#ff6666', '#ff5555', '#ff4444', '#ff3333', '#ff2222', '#ff1111',
+                     '#ff0000', '#fd0000', '#fb0000', '#f90000', '#f70000', '#f50000', '#f30000', '#f10000', '#ef0000']
 
         for row in range(self.rows):
             for col in range(self.cols):
