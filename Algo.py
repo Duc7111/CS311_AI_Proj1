@@ -138,6 +138,7 @@ def decisionSearch(world, agent="A1"):
     agent = world.agents[agent]
     queue = PriorityQueue()
     queue.put(Node(agents=agent))
+
     while queue.empty() != True:
         current = queue.get()
         # agentCurrent = current.agents

@@ -3,16 +3,33 @@ from tkinter import messagebox
 
 from _cffi_backend import callback
 
+
 def convert(board):
     converted_board = [[0 if cell == '0' else cell for cell in row] for row in board]
     return converted_board
+
+
+def special_val():
+    arr = []
+    for i in range(0, 10):
+        arr.append(f"A{i}")
+        arr.append(f"T{i}")
+        arr.append(f"K{i}")
+        arr.append(f"D{i}")
+    arr.append("UP")
+    arr.append("DO")
+    return arr
+
+
+check = special_val()
+
 
 class AlgorithmScreen:
     def __init__(self, master, level, input_file, callback):
         self.master = master
         self.level = level
         self.input_file = input_file
-        self.value = None 
+        self.value = None
         self.callback = callback  # Callback function to handle algorithm selection
         # Define custom fonts
         self.title_font = ("Arial", 16, "bold")
@@ -30,7 +47,8 @@ class AlgorithmScreen:
         # Create buttons for algorithm selection
         algorithms = ["BFS", "UCS", "A*"]
         for algorithm in algorithms:
-            algorithm_button = tk.Button(master, text=algorithm, command=lambda alg=algorithm: self.on_algorithm_click(alg),
+            algorithm_button = tk.Button(master, text=algorithm,
+                                         command=lambda alg=algorithm: self.on_algorithm_click(alg),
                                          font=self.button_font)
             algorithm_button.pack(pady=5)
 
@@ -45,18 +63,35 @@ class AlgorithmScreen:
         if self.value is None:
             self.value = convert(floor_array)  # Initialize value array if not set
 
-        if self.value[current_pos[1]][current_pos[2]] != 'T1':
+        if self.value[current_pos[1]][current_pos[2]] not in check:
             self.value[current_pos[1]][current_pos[2]] += 1
         board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
         board.pack()
+
+    def update_board_advance(self, world, current_agent):
+        self.clearscreen()
+        floor_index_to_access = current_agent.agents.pos[0]
+        floor_array = world.get_floor_array(floor_index_to_access)
+        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
+        if self.value is None:
+            self.value = convert(floor_array)  # Initialize value array if not set
+
+        if self.value[current_agent.agents.pos[1]][current_agent.agents.pos[2]] not in check:
+            self.value[current_agent.agents.pos[1]][current_agent.agents.pos[2]] += 1
+        board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
+        board.pack()
+
     def clearscreen(self):
         # Destroy all widgets in the first screen
         for widget in self.master.winfo_children():
             widget.destroy()
+
     def updatescore(self, score):
         self.score = score
         self.score_label.config(text=f"Score: {self.score}")
         self.score_label.pack(pady=10)
+
+
 class SecondScreen:
     def __init__(self, master, level, callback):
         self.master = master
@@ -81,6 +116,7 @@ class SecondScreen:
     def on_input_click(self, input_num):
         self.input = input_num
         self.callback(self.level, self.input)
+
     def clearscreen(self):
         # Destroy all widgets in the first screen
         for widget in self.master.winfo_children():
@@ -100,7 +136,6 @@ class MoveYourStepProjectApp:
         # Create and pack the title label
         self.title_label = tk.Label(master, text="MoveYourStepProject", font=self.title_font)
         self.title_label.pack(pady=10)
-
 
         # Create buttons for each level
         for level in range(1, 5):
@@ -133,8 +168,15 @@ class Board(tk.Canvas):
 
     def draw_board(self):
         # Color mapping for specific values
-        special_color_mapping = {0: "white", '-1': "gray", "T1": "yellow"}
-
+        special_color_mapping = {0: "white", '-1': "gray", 'UP': "brown", 'DO': "brown"}
+        for i in range(0, 10):
+            special_color_mapping[f"A{i}"] = "green"
+        for i in range(0, 10):
+            special_color_mapping[f"T{i}"] = "yellow"
+        for i in range(0, 10):
+            special_color_mapping[f"K{i}"] = "#8dbfff"
+        for i in range(0, 10):
+            special_color_mapping[f"D{i}"] = "#5e0511"
         # Define a range of red tones for positive values
         min_value = 1  # Minimum positive value
         max_value = 20  # Maximum positive value
@@ -163,3 +205,7 @@ class Board(tk.Canvas):
                 y2 = y1 + 0.75 * self.cell_size
 
                 self.create_rectangle(x1, y1, x2, y2, outline="black", fill=color)
+                if cell_value not in {0, '-1'}:
+                    label_x = (x1 + x2) / 2
+                    label_y = (y1 + y2) / 2
+                    self.create_text(label_x, label_y, text=str(cell_value), fill="black")
