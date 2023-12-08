@@ -160,4 +160,4 @@ def pathReader(final) -> list:
     while final is not None:
         path.insert(0, final.agents.pos)
         final = final.parent
-    return path
+    return path if len(path) > 0 else None

@@ -18,7 +18,7 @@ class Level4:
         self.__precompute()
 
     def __precompute(self) -> None:
-        temp = self.agents
+        temp = self.world.agents
         # calculate level 3 solution for each agent
         for agentKey, agent in self.agents.items():
             self.world.agents = {agentKey: agent}
@@ -39,24 +39,8 @@ class Level4:
     # return -1 if agent A1 has reached task, -2 if agent A1 has no possible move, 0 otherwise
     def move(self) -> int:
         change = False
-        for agentKey, path in self.agents.items:
+        for agentKey, path in self.agents.items():
             agent = self.world.agents[agentKey]
-            if path is None:
-                # random a task
-                self.agents[agentKey][0] = None
-                while self.agents[agentKey][0] is None:
-                    random.seed()
-                    f = random.randint(0, len(self.world.floors) - 1)
-                    n = random.randint(0, self.world.n - 1)
-                    m = random.randint(0, self.world.m - 1)
-                    if self.world.floors[f].base[n][m] == '0':
-                        world = deepcopy(self.world)
-                        world.agents = {agentKey: agent}
-                        path = decisionSearch(world, agentKey)
-                        if path is not None:
-                            self.agents[agentKey][0] = pathReader(path)
-                            self.agents[agentKey][1] = 1
-                            agent.task = Entity(f, n, m)
             # move in path
             moved = self.__move(agentKey, path)
             change = moved or change
@@ -86,7 +70,8 @@ class Level4:
                         for tempKey in self.blockLog[blockKey]:
                             if tempKey not in blockTree.keys():
                                 frontier.append(tempKey)
-                            elif blockTree[tempKey] == 0:
+                                blockTree[tempKey] = None
+                            else:
                                 deadlocked = True
                                 break
                         blockTree[blockKey] = 0
@@ -96,7 +81,7 @@ class Level4:
                         if agentKey in blockTree.keys() and blockTree[agentKey] == 0:
                             # get movable cells
                             movable = {}
-                            moves = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, -1], [-1, 1], [1, -1]]
+                            moves = ((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (-1, 1), (1, -1))
                             for move in moves:
                                 if self.world._check(move[0], move[1], agent) != msg.BLOCKED.value:
                                     movable[move] = 0
@@ -109,7 +94,7 @@ class Level4:
                                     tempPath = self.agents[tempKey]
                                     tempCur = tempPath[0][tempPath[1] - 1]
                                     tempNext = tempPath[0][tempPath[1]]
-                                    if pos == tempPath[0][tempPath[1]]:
+                                    if pos == tempNext:
                                         movable[move] += 1 if tempKey not in blockTree.keys() else 2 # prioritize semi-deadlock agents
                                     elif tempCur[1] != tempNext[1] and tempCur[2] != tempNext[2]:
                                         if pos == [tempCur[0], tempNext[1], tempCur[2]] or pos == [tempCur[0], tempCur[1], tempNext[2]]:
@@ -126,7 +111,7 @@ class Level4:
                                 # add dodge move
                                 path[0].insert(path[1], [agent.pos[0], agent.pos[1] + m[0], agent.pos[2] + m[1]])
                                 # add return move
-                                path[0].insert(path[1] + 1, agent.pos)
+                                path[0].insert(path[1] + 1, [agent.pos[0], agent.pos[1], agent.pos[2]])
                                 self.__move(agentKey, path)
                                 change = True
                             # no possible move: quit
@@ -151,8 +136,49 @@ class Level4:
                     # else, wait
             # check if agent has reached task    
             if agent.pos == agent.task.pos:
-                self.agents[agentKey][0] = None
-                agent.task = None
                 if agentKey == 'A1':
                     return -1
+                # random a task
+                while agent.pos == agent.task.pos:
+                    random.seed()
+                    f = random.randint(0, len(self.world.floors) - 1)
+                    n = random.randint(0, self.world.n - 1)
+                    m = random.randint(0, self.world.m - 1)
+                    if self.world.floors[f].base[n][m] == '0':
+                        agent.task = Entity(f, n, m)
+                        if agent.pos == agent.task.pos:
+                            continue
+                        world = deepcopy(self.world)
+                        world.agents = {agentKey: agent}
+                        path[0] = decisionSearch(world, agentKey)
+                        path[0] = pathReader(path[0])
+                        if path[0] is None:
+                            continue
+                        path[1] = 1
         return 0 if change else -2        
+
+world = World('input3_level4.txt')
+# init level 4
+level4 = Level4(world)
+# init paths
+paths = {}
+for agentKey, path in level4.agents.items():
+    paths[agentKey] = [path[0][0]]
+# move until all agents reach task
+while True:
+    result = level4.move()
+    # record path
+    for agentKey, path in level4.agents.items():
+        if path[0] is not None:
+            paths[agentKey].append(path[0][path[1] - 1])
+            print(agentKey, path[0][path[1] - 1])
+    if result == -1:
+        print('A1 has reached task')
+        break
+    elif result == -2:
+        print('No possible move')
+        break
+
+# print paths
+for agentKey, path in paths.items():
+    print(agentKey, path)

@@ -64,24 +64,24 @@ class World:
         pass
 
     def _check(self, n: int, m: int, agent: Agent) -> str:
-        n += agent.pos[1]
-        m += agent.pos[2]
-        if n not in range(0, self.n) or m not in range(0, self.m):
+        x = n + agent.pos[1]
+        y = m + agent.pos[2]
+        if x not in range(0, self.n) or y not in range(0, self.m):
             return msg.BLOCKED.value
         base = self.floors[agent.pos[0]].base
-        # for a in self.agents.values():
-        #     if a.pos == [agent.pos[0], n, m]:
-        #         return msg.BLOCKED.value
-        if base[n][m] == bs.WALL.value:
+        for a in self.agents.values():
+            if a.pos == [agent.pos[0], x, y]:
+                return msg.BLOCKED.value
+        if base[x][y] == bs.WALL.value:
             return msg.BLOCKED.value
-        elif base[n][m] == bs.UP.value:
+        elif base[x][y] == bs.UP.value:
             return msg.UP.value
-        elif base[n][m] == bs.DOWN.value:
+        elif base[x][y] == bs.DOWN.value:
             return msg.DOWN.value
-        elif base[n][m][0] == bs.KEY.value: # First char
+        elif base[x][y][0] == bs.KEY.value: # First char
             return msg.KEY.value
-        elif base[n][m][0] == bs.DOOR.value:
-            if base[n][m].replace('D', 'K') in agent.keys:
+        elif base[x][y][0] == bs.DOOR.value:
+            if base[x][y].replace('D', 'K') in agent.keys:
                 return msg.MOVEABLE.value
             else:
                 return msg.BLOCKED.value
