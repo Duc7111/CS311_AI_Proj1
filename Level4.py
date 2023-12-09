@@ -155,31 +155,31 @@ class Level4:
                             continue
                         path[1] = 1
         return 0 if change else -2        
-
-for _ in range(50):
-    world = World('input3_level4.txt')
+"""
+world = World('input3_level4.txt')
     # init level 4
-    level4 = Level4(world)
+level4 = Level4(world)
     # init paths
-    paths = {}
-    for agentKey, path in level4.agents.items():
-        paths[agentKey] = [path[0][0]]
+paths = {}
+for agentKey, path in level4.agents.items():
+    paths[agentKey] = [path[0][0]]
     # move until all agents reach task
-    while True:
-        result = level4.move()
+while True:
+    result = level4.move()
         # record path
-        for agentKey, path in level4.agents.items():
-            if path[0] is not None:
-                paths[agentKey].append(path[0][path[1] - 1])
-                print(agentKey, path[0][path[1] - 1])
-        if result == -1:
-            print('A1 has reached task')
-            break
-        elif result == -2:
-            print('No possible move')
-            break
+    for agentKey, path in level4.agents.items():
+        if path[0] is not None:
+            paths[agentKey].append(path[0][path[1] - 1])
+            print(agentKey, path[0][path[1] - 1])
+    if result == -1:
+        print('A1 has reached task')
+        break
+    elif result == -2:
+        print('No possible move')
+        break
 
     # print paths
-    for agentKey, path in paths.items():
-        print(agentKey, path)
-    print('--------------------------')
+for agentKey, path in paths.items():
+    print(agentKey, path)
+print('--------------------------')
+"""

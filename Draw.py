@@ -92,6 +92,27 @@ class AlgorithmScreen:
         self.value[agent.pos[1]][agent.pos[2]] = "A1"
         board = Board(self.master, self.value, cell_size1)  # Pass self.master instead of root
         board.pack()
+    def update_board_multi(self, world, current_agent,agentkey):
+        self.clearscreen()
+        agent = world.agents[agentkey]
+        current_floor = current_agent[0]
+        floor_array1 = world.get_floor_array(current_floor)
+        cell_size1 = (200 - len(floor_array1) - len(floor_array1[0])) / 6
+
+        if self.value is None or current_floor != self.last_floor:
+            floor_array = world.get_floor_array(current_floor)
+            cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
+            self.value = convert(floor_array)  # Update value array with new floor data
+            self.last_floor = current_floor  # Record the current floor
+
+        if self.value[current_agent[1]][current_agent[2]] not in check:
+            self.value[current_agent[1]][current_agent[2]] += 1
+        else:
+            self.value[current_agent[1]][current_agent[2]] = 1
+        #self.value[agent[1]][agent[2]] = agentkey
+        board = Board(self.master, self.value, cell_size1)  # Pass self.master instead of root
+        board.pack()
+
 
     def clearscreen(self):
         # Destroy all widgets in the first screen

@@ -8,7 +8,7 @@ from Algo import bfs, UCS, Astar,decisionSearch
 import sys
 import pygetwindow as gw
 import pyautogui
-
+from Level4 import Level4
 def visualize_heatmap(world, move, score,cell_size):
     app.clearscreen()
 
@@ -27,7 +27,7 @@ def visualize_heatmap(world, move, score,cell_size):
                     value[item.agents.pos[1]][item.agents.pos[2]] = 'A1'
                 else:
                     if re.match(r'(D\d+|A\d+|K\d+|T\d+)', str(value[item.agents.pos[1]][item.agents.pos[2]])):
-                        pass
+                        value[item.agents.pos[1]][item.agents.pos[2]] = 1
                     else:
                         value[item.agents.pos[1]][item.agents.pos[2]] = int(value[item.agents.pos[1]][item.agents.pos[2]]) + 1
 
@@ -138,11 +138,42 @@ if __name__ == "__main__":
             while final is not None:
                 path.append(final)
                 final = final.parent
+                score -= 1
             for current_node in reversed(path):
                 algorithm_screen.update_board_advance(world, current_node)
                 app.master.update()  # Force an update of the GUI
                 app.master.after(400)
                 visualize_heatmap(world, path,score,cell_size)
+        elif level == 4:
+            algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
+            level4 = Level4(world)
+            app.clearscreen()
+            floor_index_to_access = 0  # Replace this with the desired floor index
+            floor_array = world.get_floor_array(floor_index_to_access)
+            value = convert(floor_array)
+            app.clearscreen()
+            board = Board(root, value, cell_size)
+            board.pack()
+            paths = {}
+            for agentKey, path in level4.agents.items():
+                paths[agentKey] = [path[0][0]]
+            while True:
+                result = level4.move()
+                # record path
+                for agentKey, path in level4.agents.items():
+                    if path[0] is not None:
+                        val = path[0][path[1] - 1]
+                        paths[agentKey].append(val)
+                        algorithm_screen.update_board_multi(world, val, agentKey)
+                        app.master.update()  # Force an update of the GUI
+                        app.master.after(200)
+                        print(agentKey, val)
+                if result == -1:
+                    print('A1 has reached task')
+                    break
+                elif result == -2:
+                    print('No possible move')
+                    break
 
         capture_window("MoveYourStepProject")
 
