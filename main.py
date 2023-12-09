@@ -9,6 +9,37 @@ import sys
 import pygetwindow as gw
 import pyautogui
 
+def visualize_heatmap(world, move, score,cell_size):
+    app.clearscreen()
+
+    for floor_index in range(len(world.floors)):
+        current_floor_data = world.get_floor_array(floor_index)
+
+        # Create a separate value array for each floor
+        value = convert(current_floor_data)
+
+        for index, item in enumerate(reversed(move)):
+            is_last_item = index == 0
+
+            # Check if the item is on the current floor
+            if item.agents.pos[0] == floor_index:
+                if is_last_item:
+                    value[item.agents.pos[1]][item.agents.pos[2]] = 'A1'
+                else:
+                    if re.match(r'(D\d+|A\d+|K\d+|T\d+)', str(value[item.agents.pos[1]][item.agents.pos[2]])):
+                        pass
+                    else:
+                        value[item.agents.pos[1]][item.agents.pos[2]] = int(value[item.agents.pos[1]][item.agents.pos[2]]) + 1
+
+        # Create a board for each floor
+        board = Board(app.master, value, cell_size)
+        board.pack()
+
+    # Display the score label for the overall score
+    score_label = tk.Label(app.master, text=f"Overall Score: {score}", font=("Arial", 12))
+    score_label.pack(pady=10)
+
+
 def capture_window(window_title):
     # Get the specified window by its title
     window = gw.getWindowsWithTitle(window_title)
@@ -58,7 +89,7 @@ if __name__ == "__main__":
         world = World(inp)
         move = []
         score = 100
-        cell_size=40
+        cell_size=25
         if level == 1:
             algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
             if algorithm == "BFS":
@@ -100,16 +131,18 @@ if __name__ == "__main__":
             floor_index_to_access = 0  # Replace this with the desired floor index
             floor_array = world.get_floor_array(floor_index_to_access)
             value = convert(floor_array)
-            value[0][3] = "A1"
             app.clearscreen()
             board = Board(root, value, cell_size)
             board.pack()
-
+            path = []
             while final is not None:
-                algorithm_screen.update_board_advance(world, final)
-                app.master.update()  # Force an update of the GUI
-                app.master.after(200)
+                path.append(final)
                 final = final.parent
+            for current_node in reversed(path):
+                algorithm_screen.update_board_advance(world, current_node)
+                app.master.update()  # Force an update of the GUI
+                app.master.after(400)
+                visualize_heatmap(world, path,score,cell_size)
 
         capture_window("MoveYourStepProject")
 
