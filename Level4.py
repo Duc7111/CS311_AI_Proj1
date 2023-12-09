@@ -31,7 +31,7 @@ class Level4:
         if path[1] < len(path[0]):
             cur = self.world.agents[agentKey].pos
             next = path[0][path[1]]
-            if self.world.move(next[1] - cur[1], next[2] - cur[2], self.world.agents[agentKey]):
+            if self.world.move(next[1] - cur[1], next[2] - cur[2], self.world.agents[agentKey], agentKey):
                 path[1] += 1
                 return True
         return False
@@ -83,7 +83,7 @@ class Level4:
                             movable = {}
                             moves = ((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (-1, 1), (1, -1))
                             for move in moves:
-                                if self.world._check(move[0], move[1], agent) != msg.BLOCKED.value:
+                                if self.world._check(move[0], move[1], agent, agentKey) != msg.BLOCKED.value:
                                     movable[move] = 0
                             # count number of agents will get blocked by each move
                             for moves in movable:

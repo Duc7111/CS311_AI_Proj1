@@ -61,15 +61,18 @@ class World:
             self.floors.append(map)
             f += 1
             line = file.readline() # read the next line indicate next floor name
-        pass
+        self.agents = dict(sorted(self.agents.items()))
 
-    def _check(self, n: int, m: int, agent: Agent) -> str:
+
+    def _check(self, n: int, m: int, agent: Agent, agentID = 'A1') -> str:
         x = n + agent.pos[1]
         y = m + agent.pos[2]
         if x not in range(0, self.n) or y not in range(0, self.m):
             return msg.BLOCKED.value
         base = self.floors[agent.pos[0]].base
-        for a in self.agents.values():
+        for id, a in self.agents.items():
+            if id == agentID:
+                continue
             if a.pos == [agent.pos[0], x, y]:
                 return msg.BLOCKED.value
         if base[x][y] == bs.WALL.value:
@@ -90,12 +93,12 @@ class World:
 
     # movable -> move + return true | else return false
     # n, m: -1, 0, 1
-    def move(self, n: int, m: int, agent: Agent) -> bool:
+    def move(self, n: int, m: int, agent: Agent, agentID = 'A1') -> bool:
         base = self.floors[agent.pos[0]].base
         if n != 0 and m != 0: # diagonal moves
-            if self._check(0, m, agent) == msg.BLOCKED.value or self._check(n, 0, agent) == msg.BLOCKED.value:
+            if self._check(0, m, agent, agentID) == msg.BLOCKED.value or self._check(n, 0, agent, agentID) == msg.BLOCKED.value:
                 return False
-        match self._check(n, m, agent):
+        match self._check(n, m, agent, agentID):
             case msg.BLOCKED.value:
                 return False
             case msg.MOVEABLE.value:
