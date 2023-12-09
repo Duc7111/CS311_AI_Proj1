@@ -109,18 +109,18 @@ def searchKey(currentState: Node, world: World):
     visited = set()
     visited.add(tuple(currentState.agents.pos))
     checkpointQueue = []
-    # print("from:", agent.keys)
+
     while queue:
         current = queue.pop(0)
         agentCurrent = current.agents
-        # print(agentCurrent.pos)
+
+        # Find a key or goal
         if current.isGoal() == True:
             checkpointQueue.append(current)
             return checkpointQueue
         if agentCurrent.keys != currentState.agents.keys:
-            # print(agentCurrent.pos)
-            # print("get:", agentCurrent.keys)
             checkpointQueue.append(current)
+        # If not, continue moving
         else:
             for hori, verti in directions:
                 agentNext = copy.deepcopy(agentCurrent)
@@ -141,11 +141,12 @@ def decisionSearch(world, agent="A1"):
 
     while queue.empty() != True:
         current = queue.get()
-        # agentCurrent = current.agents
-        # current.printState()
+
+        # Reach goal -> stop
         if current.isGoal() == True:
             return current
 
+        # Generate successors
         checkpointQueue = searchKey(current, world)
 
         while checkpointQueue:
