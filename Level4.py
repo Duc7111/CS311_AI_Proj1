@@ -86,8 +86,8 @@ class Level4:
                                 if self.world._check(move[0], move[1], agent, agentKey) != msg.BLOCKED.value:
                                     movable[move] = 0
                             # count number of agents will get blocked by each move
-                            for moves in movable:
-                                pos = [agent.pos[0], agent.pos[1] + moves[0], agent.pos[2] + moves[1]]
+                            for move in movable:
+                                pos = [agent.pos[0], agent.pos[1] + move[0], agent.pos[2] + move[1]]
                                 for tempKey in self.agents:
                                     if tempKey == agentKey:
                                         continue
@@ -121,13 +121,12 @@ class Level4:
 
                         # else, find a new path
                         world = deepcopy(self.world)
-                        path = decisionSearch(world, agentKey)
-                        if path is not None:
-                            self.agents[agentKey][0] = pathReader(path)
-                            self.agents[agentKey][1] = 1
-                            agent.task = Entity(path[0][1][0], path[0][1][1], path[0][1][2])
+                        path[0] = decisionSearch(world, agentKey)
+                        path[0] = pathReader(path[0])
+                        path[1] = 1
+                        if path[0] is not None:
+                            agent.task = Entity(path[0][-1][0], path[0][-1][1], path[0][-1][2])
                             # dodge
-                            path = self.agents[agentKey][0]
                             self.__move(agentKey, path)
                             change = True
                         # no path to dodge: quit
@@ -139,7 +138,7 @@ class Level4:
                 if agentKey == 'A1':
                     return -1
                 # random a task
-                while agent.pos == agent.task.pos:
+                while agent.pos == agent.task.pos or path[0] is None:
                     random.seed()
                     f = random.randint(0, len(self.world.floors) - 1)
                     n = random.randint(0, self.world.n - 1)
@@ -157,28 +156,30 @@ class Level4:
                         path[1] = 1
         return 0 if change else -2        
 
-world = World('input3_level4.txt')
-# init level 4
-level4 = Level4(world)
-# init paths
-paths = {}
-for agentKey, path in level4.agents.items():
-    paths[agentKey] = [path[0][0]]
-# move until all agents reach task
-while True:
-    result = level4.move()
-    # record path
+for _ in range(50):
+    world = World('input3_level4.txt')
+    # init level 4
+    level4 = Level4(world)
+    # init paths
+    paths = {}
     for agentKey, path in level4.agents.items():
-        if path[0] is not None:
-            paths[agentKey].append(path[0][path[1] - 1])
-            print(agentKey, path[0][path[1] - 1])
-    if result == -1:
-        print('A1 has reached task')
-        break
-    elif result == -2:
-        print('No possible move')
-        break
+        paths[agentKey] = [path[0][0]]
+    # move until all agents reach task
+    while True:
+        result = level4.move()
+        # record path
+        for agentKey, path in level4.agents.items():
+            if path[0] is not None:
+                paths[agentKey].append(path[0][path[1] - 1])
+                print(agentKey, path[0][path[1] - 1])
+        if result == -1:
+            print('A1 has reached task')
+            break
+        elif result == -2:
+            print('No possible move')
+            break
 
-# print paths
-for agentKey, path in paths.items():
-    print(agentKey, path)
+    # print paths
+    for agentKey, path in paths.items():
+        print(agentKey, path)
+    print('--------------------------')
