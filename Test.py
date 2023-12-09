@@ -18,7 +18,7 @@ from Algo import bfs, UCS, Astar, decisionSearch
 #         final2 = final2.parent
 #         final3 = final3.parent
 
-world = World("input1_level2.txt")
+world = World("input1_level3.txt")
 # print(world.floors[0].base)
 # print("\\\///")
 # print(world.floors[1].base)

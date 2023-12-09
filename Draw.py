@@ -57,6 +57,7 @@ class AlgorithmScreen:
 
     def update_board(self, world, current_pos):
         self.clearscreen()
+        agent = world.agents["A1"]
         floor_index_to_access = current_pos[0]
         floor_array = world.get_floor_array(floor_index_to_access)
         cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
@@ -65,20 +66,31 @@ class AlgorithmScreen:
 
         if self.value[current_pos[1]][current_pos[2]] not in check:
             self.value[current_pos[1]][current_pos[2]] += 1
+
+        self.value[agent.pos[1]][agent.pos[2]] = "A1"
+
         board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
         board.pack()
 
     def update_board_advance(self, world, current_agent):
         self.clearscreen()
-        floor_index_to_access = current_agent.agents.pos[0]
-        floor_array = world.get_floor_array(floor_index_to_access)
-        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
-        if self.value is None:
-            self.value = convert(floor_array)  # Initialize value array if not set
+        agent = world.agents["A1"]
+        current_floor = current_agent.agents.pos[0]
+        floor_array1 = world.get_floor_array(current_floor)
+        cell_size1 = (200 - len(floor_array1) - len(floor_array1[0])) / 6
+
+        if self.value is None or current_floor != self.last_floor:
+            floor_array = world.get_floor_array(current_floor)
+            cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
+            self.value = convert(floor_array)  # Update value array with new floor data
+            self.last_floor = current_floor  # Record the current floor
 
         if self.value[current_agent.agents.pos[1]][current_agent.agents.pos[2]] not in check:
             self.value[current_agent.agents.pos[1]][current_agent.agents.pos[2]] += 1
-        board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
+        else:
+            self.value[current_agent.agents.pos[1]][current_agent.agents.pos[2]] = 1
+        self.value[agent.pos[1]][agent.pos[2]] = "A1"
+        board = Board(self.master, self.value, cell_size1)  # Pass self.master instead of root
         board.pack()
 
     def clearscreen(self):
@@ -209,3 +221,4 @@ class Board(tk.Canvas):
                     label_x = (x1 + x2) / 2
                     label_y = (y1 + y2) / 2
                     self.create_text(label_x, label_y, text=str(cell_value), fill="black")
+
