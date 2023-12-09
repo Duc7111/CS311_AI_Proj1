@@ -18,13 +18,16 @@ def bfs(world):
     steps = []  # Store the visited positions
 
     while queue:
+        # Get current state
         current = queue.pop(0)
         agentCurrent = current.agents
         steps.append(agentCurrent.pos)
 
+        # Reach goal -> stop
         if current.isGoal() == True:
             return current, steps
 
+        # Generate successors
         for hori, verti in directions:
             new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
             if tuple(new_pos) in visited:
@@ -47,6 +50,7 @@ def UCS(world):
     steps = []  # Store the visited positions
 
     while not queue.empty():
+        # Get current state
         current = queue.get()
         agentCurrent = current.agents
         steps.append(agentCurrent.pos)
@@ -56,9 +60,11 @@ def UCS(world):
 
         visited.add(tuple(agentCurrent.pos))
 
+        # Reach goal -> stop
         if current.isGoal():
             return current, steps
 
+        # Generate successors
         for hori, verti in directions:
             new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
             if tuple(new_pos) in visited:
@@ -80,6 +86,7 @@ def Astar(world):
     steps = []  # Store the visited positions
 
     while not queue.empty():
+        # Get current state
         current = queue.get()
         agentCurrent = current.agents
         steps.append(agentCurrent.pos)
@@ -89,9 +96,11 @@ def Astar(world):
 
         visited.add(tuple(agentCurrent.pos))
 
+        # Reach goal -> stop
         if current.isGoal():
             return current, steps
 
+        # Generate successors
         for hori, verti in directions:
             new_pos = [agentCurrent.pos[0], agentCurrent.pos[1] + hori, agentCurrent.pos[2] + verti]
             if tuple(new_pos) in visited:
