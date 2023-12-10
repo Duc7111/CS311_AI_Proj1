@@ -108,6 +108,7 @@ class World:
                 agent._move(n, m)
             case msg.DOWN.value:
                 agent.pos[0] += -1
+                agent._move(n, m)
             case msg.KEY.value:
                 agent._move(n, m)
                 agent.keys[base[agent.pos[1]][agent.pos[2]]] = 1 # add key
