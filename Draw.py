@@ -75,7 +75,7 @@ class AlgorithmScreen:
     def update_board_advance(self, world, current_agent):
         self.clearscreen()
         agent = world.agents["A1"]
-        current_floor = current_agent.agents.pos[0]
+        current_floor = agent.pos[0]
         floor_array1 = world.get_floor_array(current_floor)
         cell_size1 = (200 - len(floor_array1) - len(floor_array1[0])) / 5
         
@@ -123,8 +123,10 @@ class AlgorithmScreen:
                         if self.value[i][j] == agent_key:
                             self.value[i][j] = 0
             # Update the current position of the agent
-                self.value[x][y] = agent_key
-                self.value[taskpos[1]][taskpos[2]] = task
+                if floor == current_floor:
+                    self.value[x][y] = agent_key
+                if taskpos[0] == current_floor:
+                    self.value[taskpos[1]][taskpos[2]] = task
         board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
         board.pack()
 
