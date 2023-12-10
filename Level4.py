@@ -32,6 +32,7 @@ class Level4:
             cur = self.world.agents[agentKey].pos
             next = path[0][path[1]]
             if self.world.move(next[1] - cur[1], next[2] - cur[2], self.world.agents[agentKey], agentKey):
+                self.world.agents[agentKey].pos = next
                 path[1] += 1
                 return True
         return False
