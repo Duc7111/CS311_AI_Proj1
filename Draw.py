@@ -89,15 +89,16 @@ class AlgorithmScreen:
             self.value[current_agent.agents.pos[1]][current_agent.agents.pos[2]] += 1
         else:
             self.value[current_agent.agents.pos[1]][current_agent.agents.pos[2]] = 1
-        self.value[agent.pos[1]][agent.pos[2]] = "A1"
+        #self.value[agent.pos[1]][agent.pos[2]] = "A1"
         board = Board(self.master, self.value, cell_size1)  # Pass self.master instead of root
         board.pack()
-    def update_board_multi(self, world, agent_positions):
+    def update_board_multi(self, world, agent_positions,agentKey,taskpos):
         self.clearscreen()
         print(agent_positions)
         if not agent_positions:
             return  # No positions to update
-
+        #convert agentKey from A1 to T1, etc.
+        task = agentKey.replace('A', 'T')
         # Find the first non-None floor value
         current_floor = next((floor for path in agent_positions.values() for floor, _, _ in path if floor is not None), None)
     
@@ -105,7 +106,7 @@ class AlgorithmScreen:
             return  # No valid positions found
 
         floor_array = world.get_floor_array(current_floor)
-        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
+        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 5
 
         if self.value is None or current_floor != self.last_floor:
             self.value = convert(floor_array)  # Update value array with new floor data
@@ -120,8 +121,8 @@ class AlgorithmScreen:
                         if self.value[i][j] == agent_key:
                             self.value[i][j] = 0
             # Update the current position of the agent
-                if self.value[x][y] not in check:
-                    self.value[x][y] = agent_key
+                self.value[x][y] = agent_key
+                self.value[taskpos[1]][taskpos[2]] = task
         board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
         board.pack()
 

@@ -177,21 +177,15 @@ if __name__ == "__main__":
             while True:
                 result = level4.move()
                 # record path
-                """
-                for agentKey, path in level4.agents.items():
-                    if path[0] is not None:
-                        val = path[0][path[1] - 1]
-                        paths[agentKey].append(val)
-                        algorithm_screen.update_board_multi(world, val, agentKey)
-                        app.master.update()  # Force an update of the GUI
-                        app.master.after(200)
-                        print(agentKey, val)
-                """
                 for agentKey, path in level4.agents.items():
                     if path[0] is not None:
                         val = path[0][path[1] - 1]
                         paths[agentKey] = [val]
-                        algorithm_screen.update_board_multi(world, paths)
+                        #print task of agent
+                        agent = world.agents[agentKey]
+                        print("Task of agent "+agentKey)
+                        print(agent.task.pos)
+                        algorithm_screen.update_board_multi(world, paths,agentKey,agent.task.pos)
                         app.master.update()  # Force an update of the GUI
                         app.master.after(400)
                         print(agentKey, val)
