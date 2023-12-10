@@ -187,7 +187,7 @@ if __name__ == "__main__":
                         print(agent.task.pos)
                         algorithm_screen.update_board_multi(world, paths,agentKey,agent.task.pos)
                         app.master.update()  # Force an update of the GUI
-                        app.master.after(400)
+                        app.master.after(250)
                         print(agentKey, val)
                 if result == -1:
                     print('A1 has reached task')
