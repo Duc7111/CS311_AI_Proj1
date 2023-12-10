@@ -89,7 +89,11 @@ if __name__ == "__main__":
         world = World(inp)
         move = []
         score = 100
-        cell_size=20
+        floor_index_to_access = world.agents["A1"].pos[0]  # Replace this with the desired floor index
+        floor_array = world.get_floor_array(floor_index_to_access)
+        value = convert(floor_array)
+        value[world.agents["A1"].pos[1]][world.agents["A1"].pos[2]] = 'A1'
+        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 5
         if level == 1:
             algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
             if algorithm == "BFS":
@@ -103,28 +107,33 @@ if __name__ == "__main__":
                     algorithm_screen.update_board(world, pos)
                     app.master.update()  # Force an update of the GUI
                     app.master.after(80)
-            while final is not None:
-                move.append(final.agents.pos)
-                final = final.parent
-                score -= 1
-            floor_index_to_access = 0  # Replace this with the desired floor index
-            floor_array = world.get_floor_array(floor_index_to_access)
-            value = convert(floor_array)
-            cell_size = (200 - len(floor_array) - len(floor_array[0])) / 5
-            for index, item in enumerate(reversed(move)):
-                is_last_item = index == 0
-                if is_last_item:
-                    value[item[1]][item[2]] = 'A1'
-                else:
-                    if re.match(r'(D\d+|A\d+|K\d+|T\d+)', str(value[item[1]][item[2]])):
-                        pass
+                while final is not None:
+                    move.append(final.agents.pos)
+                    final = final.parent
+                    score -= 1
+                floor_index_to_access = 0  # Replace this with the desired floor index
+                floor_array = world.get_floor_array(floor_index_to_access)
+                value = convert(floor_array)
+                cell_size = (220 - len(floor_array) - len(floor_array[0])) / 4
+                for index, item in enumerate(reversed(move)):
+                    is_last_item = index == 0
+                    if is_last_item:
+                        value[item[1]][item[2]] = 'A1'
                     else:
-                        value[item[1]][item[2]] = int(value[item[1]][item[2]]) + 1
-            app.clearscreen()
-            board = Board(root, value, cell_size)
-            board.pack()
-            score_label = tk.Label(root, text=f"Score: {score}", font=("Arial", 12))
-            score_label.pack(pady=10)
+                        if re.match(r'(D\d+|A\d+|K\d+|T\d+)', str(value[item[1]][item[2]])):
+                            pass
+                        else:
+                            value[item[1]][item[2]] = int(value[item[1]][item[2]]) + 1
+                app.clearscreen()
+                board = Board(root, value, cell_size)
+                board.pack()
+                score_label = tk.Label(root, text=f"Score: {score}", font=("Arial", 12))
+                score_label.pack(pady=10)
+            else:
+                tk.messagebox.showinfo("No solution", "No solution found.")
+                app.clearscreen()
+                board = Board(root, value, cell_size)
+                board.pack()
         elif level == 2 or level == 3:
             algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
             final = decisionSearch(world)
@@ -148,7 +157,10 @@ if __name__ == "__main__":
                     app.master.after(250)
                 visualize_heatmap(world, path,score,cell_size)
             else: 
-                tk.Message("No solution")
+                tk.messagebox.showinfo("No solution", "No solution found.")
+                app.clearscreen()
+                board = Board(root, value, cell_size)
+                board.pack()
         elif level == 4:
             algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
             level4 = Level4(world)

@@ -120,7 +120,8 @@ class AlgorithmScreen:
                         if self.value[i][j] == agent_key:
                             self.value[i][j] = 0
             # Update the current position of the agent
-                self.value[x][y] = agent_key
+                if self.value[x][y] not in check:
+                    self.value[x][y] = agent_key
         board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
         board.pack()
 
@@ -209,6 +210,7 @@ class Board(tk.Canvas):
         self.cols = cols
         self.cell_size = cell_size
         self.board_data = board_data
+        self.original_values = {}  # Store the original values of the cells
         self.draw_board()
 
     def draw_board(self):
@@ -221,7 +223,7 @@ class Board(tk.Canvas):
         for i in range(0, 10):
             special_color_mapping[f"K{i}"] = "#8dbfff"
         for i in range(0, 10):
-            special_color_mapping[f"D{i}"] = "#5e0511"
+            special_color_mapping[f"D{i}"] = "#EA7DFF"
         # Define a range of red tones for positive values
         min_value = 1  # Minimum positive value
         max_value = 20  # Maximum positive value
@@ -248,10 +250,32 @@ class Board(tk.Canvas):
                 y1 = row * 0.75 * self.cell_size
                 x2 = x1 + self.cell_size
                 y2 = y1 + 0.75 * self.cell_size
+                self.original_values[(row, col)] = cell_value
 
                 self.create_rectangle(x1, y1, x2, y2, outline="black", fill=color)
                 if cell_value not in {0, '-1'}:
                     label_x = (x1 + x2) / 2
                     label_y = (y1 + y2) / 2
                     self.create_text(label_x, label_y, text=str(cell_value), fill="black")
+    def update_cell(self, row, col, value):
+        # Update a specific cell with the given value
+        self.board_data[row][col] = value
 
+        # Check if the cell contains a special value
+        if self.original_values.get((row, col)) not in {'T1', 'A1', 'K1', 'D1'}:
+            # If not a special value, update the display with the new value
+            self.create_rectangle(
+                col * self.cell_size,
+                row * 0.75 * self.cell_size,
+                (col + 1) * self.cell_size,
+                (row + 1) * 0.75 * self.cell_size,
+                outline="black",
+                fill=value,
+            )
+            if value not in {0, '-1'}:
+                label_x = (col * self.cell_size + (col + 1) * self.cell_size) / 2
+                label_y = (row * 0.75 * self.cell_size + (row + 1) * 0.75 * self.cell_size) / 2
+                self.create_text(label_x, label_y, text=str(value), fill="black")
+        else:
+            # If it's a special value, restore the original display
+            self.draw_board()
