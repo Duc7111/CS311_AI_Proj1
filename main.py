@@ -148,7 +148,7 @@ if __name__ == "__main__":
                     app.master.after(250)
                 visualize_heatmap(world, path,score,cell_size)
             else: 
-                app.Message("No solution")
+                tk.Message("No solution")
         elif level == 4:
             algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
             level4 = Level4(world)
@@ -165,6 +165,7 @@ if __name__ == "__main__":
             while True:
                 result = level4.move()
                 # record path
+                """
                 for agentKey, path in level4.agents.items():
                     if path[0] is not None:
                         val = path[0][path[1] - 1]
@@ -172,6 +173,15 @@ if __name__ == "__main__":
                         algorithm_screen.update_board_multi(world, val, agentKey)
                         app.master.update()  # Force an update of the GUI
                         app.master.after(200)
+                        print(agentKey, val)
+                """
+                for agentKey, path in level4.agents.items():
+                    if path[0] is not None:
+                        val = path[0][path[1] - 1]
+                        paths[agentKey] = [val]
+                        algorithm_screen.update_board_multi(world, paths)
+                        app.master.update()  # Force an update of the GUI
+                        app.master.after(400)
                         print(agentKey, val)
                 if result == -1:
                     print('A1 has reached task')

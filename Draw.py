@@ -60,7 +60,7 @@ class AlgorithmScreen:
         agent = world.agents["A1"]
         floor_index_to_access = current_pos[0]
         floor_array = world.get_floor_array(floor_index_to_access)
-        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
+        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 5
         if self.value is None:
             self.value = convert(floor_array)  # Initialize value array if not set
 
@@ -77,11 +77,11 @@ class AlgorithmScreen:
         agent = world.agents["A1"]
         current_floor = current_agent.agents.pos[0]
         floor_array1 = world.get_floor_array(current_floor)
-        cell_size1 = (200 - len(floor_array1) - len(floor_array1[0])) / 6
+        cell_size1 = (200 - len(floor_array1) - len(floor_array1[0])) / 5
 
         if self.value is None or current_floor != self.last_floor:
             floor_array = world.get_floor_array(current_floor)
-            cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
+            cell_size = (200 - len(floor_array) - len(floor_array[0])) / 5
             self.value = convert(floor_array)  # Update value array with new floor data
             self.last_floor = current_floor  # Record the current floor
 
@@ -92,26 +92,38 @@ class AlgorithmScreen:
         self.value[agent.pos[1]][agent.pos[2]] = "A1"
         board = Board(self.master, self.value, cell_size1)  # Pass self.master instead of root
         board.pack()
-    def update_board_multi(self, world, current_agent,agentkey):
+    def update_board_multi(self, world, agent_positions):
         self.clearscreen()
-        agent = world.agents[agentkey]
-        current_floor = current_agent[0]
-        floor_array1 = world.get_floor_array(current_floor)
-        cell_size1 = (200 - len(floor_array1) - len(floor_array1[0])) / 6
+        print(agent_positions)
+        if not agent_positions:
+            return  # No positions to update
+
+        # Find the first non-None floor value
+        current_floor = next((floor for path in agent_positions.values() for floor, _, _ in path if floor is not None), None)
+    
+        if current_floor is None:
+            return  # No valid positions found
+
+        floor_array = world.get_floor_array(current_floor)
+        cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
 
         if self.value is None or current_floor != self.last_floor:
-            floor_array = world.get_floor_array(current_floor)
-            cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
             self.value = convert(floor_array)  # Update value array with new floor data
             self.last_floor = current_floor  # Record the current floor
 
-        if self.value[current_agent[1]][current_agent[2]] not in check:
-            self.value[current_agent[1]][current_agent[2]] += 1
-        else:
-            self.value[current_agent[1]][current_agent[2]] = 1
-        #self.value[agent[1]][agent[2]] = agentkey
-        board = Board(self.master, self.value, cell_size1)  # Pass self.master instead of root
+        for agent_key, path in agent_positions.items():
+            if path:
+                floor, x, y = path[-1]  # Use the last position in the agent's path
+            # Clear previous positions of the agent
+                for i in range(len(self.value)):
+                    for j in range(len(self.value[0])):
+                        if self.value[i][j] == agent_key:
+                            self.value[i][j] = 0
+            # Update the current position of the agent
+                self.value[x][y] = agent_key
+        board = Board(self.master, self.value, cell_size)  # Pass self.master instead of root
         board.pack()
+
 
 
     def clearscreen(self):
