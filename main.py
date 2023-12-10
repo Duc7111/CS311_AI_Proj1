@@ -89,7 +89,7 @@ if __name__ == "__main__":
         world = World(inp)
         move = []
         score = 100
-        cell_size=25
+        cell_size=20
         if level == 1:
             algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
             if algorithm == "BFS":
@@ -110,7 +110,7 @@ if __name__ == "__main__":
             floor_index_to_access = 0  # Replace this with the desired floor index
             floor_array = world.get_floor_array(floor_index_to_access)
             value = convert(floor_array)
-            cell_size = (200 - len(floor_array) - len(floor_array[0])) / 6
+            cell_size = (200 - len(floor_array) - len(floor_array[0])) / 5
             for index, item in enumerate(reversed(move)):
                 is_last_item = index == 0
                 if is_last_item:
@@ -131,19 +131,24 @@ if __name__ == "__main__":
             floor_index_to_access = 0  # Replace this with the desired floor index
             floor_array = world.get_floor_array(floor_index_to_access)
             value = convert(floor_array)
+            agent = world.agents["A1"]
+            value[agent.pos[1]][agent.pos[2]]="A1"
             app.clearscreen()
             board = Board(root, value, cell_size)
             board.pack()
             path = []
-            while final is not None:
-                path.append(final)
-                final = final.parent
-                score -= 1
-            for current_node in reversed(path):
-                algorithm_screen.update_board_advance(world, current_node)
-                app.master.update()  # Force an update of the GUI
-                app.master.after(400)
+            if final is not None:
+                while final is not None:
+                    path.append(final)
+                    final = final.parent
+                    score -= 1
+                for current_node in reversed(path):
+                    algorithm_screen.update_board_advance(world, current_node)
+                    app.master.update()  # Force an update of the GUI
+                    app.master.after(250)
                 visualize_heatmap(world, path,score,cell_size)
+            else: 
+                app.Message("No solution")
         elif level == 4:
             algorithm_screen = AlgorithmScreen(root, level, input_file, handle_algorithm_click)
             level4 = Level4(world)
