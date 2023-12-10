@@ -26,7 +26,7 @@ def visualize_heatmap(world, move, score,cell_size):
                 if is_last_item:
                     value[item.agents.pos[1]][item.agents.pos[2]] = 'A1'
                 else:
-                    if re.match(r'(D\d+|A\d+|K\d+|T\d+)', str(value[item.agents.pos[1]][item.agents.pos[2]])):
+                    if re.match(r'(D\d+|A\d+|K\d+|T\d+|UP|DO)', str(value[item.agents.pos[1]][item.agents.pos[2]])):
                         value[item.agents.pos[1]][item.agents.pos[2]] = 1
                     else:
                         value[item.agents.pos[1]][item.agents.pos[2]] = int(value[item.agents.pos[1]][item.agents.pos[2]]) + 1
@@ -38,7 +38,34 @@ def visualize_heatmap(world, move, score,cell_size):
     # Display the score label for the overall score
     score_label = tk.Label(app.master, text=f"Overall Score: {score}", font=("Arial", 12))
     score_label.pack(pady=10)
+def visualize_heatmap_extra(world, move, score, cell_size):
+    app.clearscreen()
 
+    for floor_index in range(len(world.floors)):
+        current_floor_data = world.get_floor_array(floor_index)
+
+        # Create a separate value array for each floor
+        value = convert(current_floor_data)
+
+        # Get the path for 'A1' from the dictionary
+        path_A1 = move.get('A1', [])
+        for item in path_A1:
+            is_first_item = item == path_A1[0]
+            # Check if the item is on the current floor
+            if item[0] == floor_index:
+                if is_first_item:
+                    value[item[1]][item[2]] = 'A1'
+                else:
+                    if re.match(r'(D\d+|A\d+|K\d+|T\d+|UP|DO)', str(value[item[1]][item[2]])):
+                        value[item[1]][item[2]] = 1  # Set to 1 or any desired value
+                    else:
+                        value[item[1]][item[2]] = int(value[item[1]][item[2]]) + 1  # Increment the value by 1
+        # Create a board for each floor
+        board = Board(app.master, value, cell_size)
+        board.pack(side=tk.LEFT, padx=10)
+
+    score_label = tk.Label(app.master, text=f"Overall Score: {score}", font=("Arial", 12))
+    score_label.pack(side=tk.BOTTOM, pady=10)
 
 def capture_window(window_title):
     # Get the specified window by its title
@@ -172,8 +199,10 @@ if __name__ == "__main__":
             board = Board(root, value, cell_size)
             board.pack()
             paths = {}
+            move = {}
             for agentKey, path in level4.agents.items():
                 paths[agentKey] = [path[0][0]]
+                move[agentKey]  = [path[0][0]]
             while True:
                 result = level4.move()
                 # record path
@@ -181,20 +210,24 @@ if __name__ == "__main__":
                     if path[0] is not None:
                         val = path[0][path[1] - 1]
                         paths[agentKey] = [val]
+                        move[agentKey].append(val)
                         #print task of agent
                         agent = world.agents[agentKey]
-                        print("Task of agent "+agentKey)
-                        print(agent.task.pos)
                         algorithm_screen.update_board_multi(world, paths,agentKey,agent.task.pos)
                         app.master.update()  # Force an update of the GUI
-                        app.master.after(250)
+                        app.master.after(1)
                         print(agentKey, val)
+                        if(agentKey == "A1"):
+                            score -= 1
                 if result == -1:
                     print('A1 has reached task')
                     break
                 elif result == -2:
                     print('No possible move')
+                    score = -100
                     break
+            #app.clearscreen()
+            visualize_heatmap_extra(world, move,score,cell_size)
 
         capture_window("MoveYourStepProject")
 
