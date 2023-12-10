@@ -227,7 +227,13 @@ if __name__ == "__main__":
                     score = -100
                     break
             #app.clearscreen()
-            visualize_heatmap_extra(world, move,score,cell_size)
+            if result == -1:
+                visualize_heatmap_extra(world, move,score,cell_size)
+            else:
+                tk.messagebox.showinfo("No solution", "No solution found.")
+                app.clearscreen()
+                board = Board(root, value, cell_size)
+                board.pack()
 
         capture_window("MoveYourStepProject")
 
