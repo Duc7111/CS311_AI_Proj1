@@ -34,6 +34,9 @@ def visualize_heatmap(world, move, score,cell_size):
         # Create a board for each floor
         board = Board(app.master, value, cell_size)
         board.pack()
+        app.master.update()  # Force an update of the GUI
+        app.master.after(4000)
+        app.clearscreen()
 
     # Display the score label for the overall score
     score_label = tk.Label(app.master, text=f"Overall Score: {score}", font=("Arial", 12))
@@ -63,6 +66,9 @@ def visualize_heatmap_extra(world, move, score, cell_size):
         # Create a board for each floor
         board = Board(app.master, value, cell_size)
         board.pack(side=tk.LEFT, padx=10)
+        app.master.update()  # Force an update of the GUI
+        app.master.after(4000)
+        app.clearscreen()
 
     score_label = tk.Label(app.master, text=f"Overall Score: {score}", font=("Arial", 12))
     score_label.pack(side=tk.BOTTOM, pady=10)
