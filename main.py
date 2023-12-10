@@ -36,6 +36,7 @@ def visualize_heatmap(world, move, score,cell_size):
         board.pack()
         app.master.update()  # Force an update of the GUI
         app.master.after(4000)
+        capture_window("MoveYourStepProject",floor_index)
         app.clearscreen()
 
     # Display the score label for the overall score
@@ -68,12 +69,13 @@ def visualize_heatmap_extra(world, move, score, cell_size):
         board.pack(side=tk.LEFT, padx=10)
         app.master.update()  # Force an update of the GUI
         app.master.after(4000)
+        capture_window("MoveYourStepProject",floor_index)
         app.clearscreen()
 
     score_label = tk.Label(app.master, text=f"Overall Score: {score}", font=("Arial", 12))
     score_label.pack(side=tk.BOTTOM, pady=10)
 
-def capture_window(window_title):
+def capture_window(window_title,ID):
     # Get the specified window by its title
     window = gw.getWindowsWithTitle(window_title)
 
@@ -88,7 +90,7 @@ def capture_window(window_title):
     screenshot = pyautogui.screenshot(region=(window_rect.left, window_rect.top, window_rect.width, window_rect.height))
 
     # Save the screenshot to a file
-    screenshot.save("window_screenshot.png")
+    screenshot.save(f"floor{ID}.png")
 
     print(f"Screenshot of '{window_title}' captured and saved.")
 
@@ -240,9 +242,6 @@ if __name__ == "__main__":
                 app.clearscreen()
                 board = Board(root, value, cell_size)
                 board.pack()
-
-        capture_window("MoveYourStepProject")
-
 
     root = tk.Tk()
     app = MoveYourStepProjectApp(root, handle_level_selection)
