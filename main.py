@@ -133,7 +133,7 @@ if __name__ == "__main__":
                 for pos in steps:
                     algorithm_screen.update_board(world, pos)
                     app.master.update()  # Force an update of the GUI
-                    app.master.after(80)
+                    app.master.after(150)
                 while final is not None:
                     move.append(final.agents.pos)
                     final = final.parent
@@ -215,7 +215,7 @@ if __name__ == "__main__":
                         agent = world.agents[agentKey]
                         algorithm_screen.update_board_multi(world, paths,agentKey,agent.task.pos)
                         app.master.update()  # Force an update of the GUI
-                        app.master.after(1)
+                        app.master.after(100)
                         print(agentKey, val)
                         if(agentKey == "A1"):
                             score -= 1
